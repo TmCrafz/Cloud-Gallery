@@ -47,12 +47,16 @@ public class SettingsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        mViewModel.serverUrl = mSavedSettings.getString(getString(R.string.key_preference_server_url), "");
+        mViewModel.username = mSavedSettings.getString(getString(R.string.key_preference_username), "");
+        mViewModel.password = mSavedSettings.getString(getString(R.string.key_preference_password), "");
+
         mEditTextServer = (EditText) getActivity().findViewById(R.id.edit_text_server);
-        mEditTextServer.setText(mSavedSettings.getString(getString(R.string.key_preference_server_url), ""));
+        mEditTextServer.setText(mViewModel.serverUrl);
         mEditTextUsername = (EditText) getActivity().findViewById(R.id.edit_text_username);
-        mEditTextUsername.setText(mSavedSettings.getString(getString(R.string.key_preference_username), ""));
+        mEditTextUsername.setText(mViewModel.username);
         mEditTextPassword = (EditText) getActivity().findViewById(R.id.edit_text_password);
-        mEditTextPassword.setText(mSavedSettings.getString(getString(R.string.key_preference_password), ""));
+        mEditTextPassword.setText(mViewModel.password);
 
         Button btnSave = getActivity().findViewById(R.id.button_save_settings);
         btnSave.setOnClickListener(new View.OnClickListener() {

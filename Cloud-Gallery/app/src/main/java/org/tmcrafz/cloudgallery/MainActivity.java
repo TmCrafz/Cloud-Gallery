@@ -1,6 +1,7 @@
 package org.tmcrafz.cloudgallery;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 
@@ -16,8 +17,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-public class MainActivity extends AppCompatActivity {
+import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudWrapper;
 
+public class MainActivity extends AppCompatActivity {
+    private static String TAG = NextcloudWrapper.class.getCanonicalName();
     private AppBarConfiguration mAppBarConfiguration;
 
     @Override

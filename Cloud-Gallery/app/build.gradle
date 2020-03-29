@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
-
+android {
+    useLibrary 'org.apache.http.legacy'
+}
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
@@ -20,7 +22,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
 }
 
 dependencies {
@@ -36,6 +37,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    implementation 'com.github.nextcloud:android-library:2.1.0'
-
+    implementation 'com.github.nextcloud:android-library:-SNAPSHOT'
+    implementation "commons-httpclient:commons-httpclient:3.1@jar" // remove after entire switch of nextcloud lib to lib v2
 }
