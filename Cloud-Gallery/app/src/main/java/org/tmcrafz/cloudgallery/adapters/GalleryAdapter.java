@@ -2,6 +2,7 @@ package org.tmcrafz.cloudgallery.adapters;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +12,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.tmcrafz.cloudgallery.R;
+import org.tmcrafz.cloudgallery.ui.home.HomeFragment;
 
 import java.util.ArrayList;
 
 public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.PlaceViewHolder> {
+    private static String TAG = GalleryAdapter.class.getCanonicalName();
 
     private Context mContext;
     private ArrayList<String> mImagePaths;
@@ -35,7 +38,11 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.PlaceVie
     @Override
     public void onBindViewHolder(@NonNull PlaceViewHolder holder, int position) {
         String path = mImagePaths.get(position);
-        holder.mImagePreview.setImageBitmap(BitmapFactory.decodeFile(path));
+        if (!holder.mIsLoaded) {
+            holder.mImagePreview.setImageBitmap(BitmapFactory.decodeFile(path));
+            Log.d(TAG, "GalleryAdapter Updated: " + path);
+        }
+
         //holder.mImagePreview.setImageResource(R.drawable.ic_launcher_foreground);
     }
 
@@ -47,6 +54,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.PlaceVie
     public static class PlaceViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView mImagePreview;
+        public boolean mIsLoaded = false;
 
         public PlaceViewHolder(@NonNull View itemView) {
             super(itemView);
