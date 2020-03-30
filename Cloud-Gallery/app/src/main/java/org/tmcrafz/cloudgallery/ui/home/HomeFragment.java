@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,10 +19,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.owncloud.android.lib.resources.files.model.RemoteFile;
 
 import org.tmcrafz.cloudgallery.R;
+import org.tmcrafz.cloudgallery.adapters.GalleryAdapter;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudOperationDownloadFile;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudOperationReadFolder;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudWrapper;
@@ -35,9 +39,11 @@ public class HomeFragment extends Fragment implements NextcloudOperationReadFold
     private HomeViewModel homeViewModel;
     private NextcloudWrapper mNextCloudWrapper;
 
-    ImageView mImageViewShow;
     EditText mEditTextPath;
-
+    RecyclerView mRecyclerViewGallery;
+    GridLayoutManager mGridLayoutManagerGallery;
+    GalleryAdapter mGalleryAdapter;
+    ArrayList<String> mImagePaths;
     // private Handler mHandlerTmp = new Handler();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -48,8 +54,8 @@ public class HomeFragment extends Fragment implements NextcloudOperationReadFold
 
 
         mEditTextPath = root.findViewById(R.id.editText_path);
-        mEditTextPath.setText("/Test2/Bjorn_S04E20_promo600.jpg");
-        mImageViewShow = root.findViewById(R.id.imageView_image);
+        mEditTextPath.setText("/Test1/file1.jpg");
+        //mImageViewShow = root.findViewById(R.id.imageView_image);
 
         Button buttonShow = root.findViewById(R.id.button_show);
         buttonShow.setOnClickListener(new View.OnClickListener() {
@@ -60,13 +66,14 @@ public class HomeFragment extends Fragment implements NextcloudOperationReadFold
             }
         });
 
-//        final TextView textView = root.findViewById(R.id.text_home);
-//        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                textView.setText("TEST");
-//            }
-//        });
+        mRecyclerViewGallery = root.findViewById(R.id.recyclerView_gallery);
+        mGridLayoutManagerGallery = new GridLayoutManager(getActivity(), 2);
+        mRecyclerViewGallery.setLayoutManager(mGridLayoutManagerGallery);
+        mImagePaths = new ArrayList<String>();
+        mGalleryAdapter = new GalleryAdapter(getActivity(), mImagePaths);
+        mRecyclerViewGallery.setAdapter(mGalleryAdapter);
+
+
         SharedPreferences prefs = getActivity().getSharedPreferences(getString(R.string.key_preference_file_key), 0);
         String serverUrl = prefs.getString(getString(R.string.key_preference_server_url), "");
         String username = prefs.getString(getString(R.string.key_preference_username), "");
@@ -96,12 +103,13 @@ public class HomeFragment extends Fragment implements NextcloudOperationReadFold
         return root;
     }
 
-    public void downloadAndShowPicture(String path) {
-        Log.d(TAG, "Download path : " + path);
-        String filename = path.substring(path.lastIndexOf("/") + 1);
+    public void downloadAndShowPicture(String serverPath) {
+        Log.d(TAG, "Download path : " + serverPath);
+        //String filename = path.substring(path.lastIndexOf("/") + 1);
         String downloadedFilePath = getContext().getCacheDir().toString();
-        String downloadedFile = downloadedFilePath + path;
-        mNextCloudWrapper.startDownload(path, new File(downloadedFilePath), downloadedFile , new Handler(),this);
+        String downloadedFile = downloadedFilePath + serverPath;
+        Log.d(TAG, "downloadAndShowPicture serverPath: " + serverPath + " downloadedFilePath: " + downloadedFilePath + " downloadedFile: " + downloadedFile);
+        mNextCloudWrapper.startDownload(serverPath, new File(downloadedFilePath), downloadedFile , new Handler(),this);
     }
 
     @Override
@@ -134,7 +142,9 @@ public class HomeFragment extends Fragment implements NextcloudOperationReadFold
             if (file.exists()) {
                 Log.d(TAG, "FILE_NOTE: exists.");
             }
-            mImageViewShow.setImageBitmap(BitmapFactory.decodeFile(identifier));
+            //mImageViewShow.setImageBitmap(BitmapFactory.decodeFile(identifier));
+            mImagePaths.add(identifier);
+            mGalleryAdapter.notifyDataSetChanged();
         }
         else {
             Log.d(TAG, "HomeFragment onDownloadFileFinished FAILED");
