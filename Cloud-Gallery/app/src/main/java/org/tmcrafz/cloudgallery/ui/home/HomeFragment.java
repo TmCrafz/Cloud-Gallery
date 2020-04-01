@@ -22,6 +22,7 @@ import com.owncloud.android.lib.resources.files.model.RemoteFile;
 import org.tmcrafz.cloudgallery.R;
 import org.tmcrafz.cloudgallery.adapters.GalleryAdapter;
 import org.tmcrafz.cloudgallery.datahandling.DataHandlerSql;
+import org.tmcrafz.cloudgallery.datahandling.RemotePath;
 import org.tmcrafz.cloudgallery.ui.ShowPicturesActivity;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudOperationDownloadFile;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudOperationReadFolder;
@@ -44,7 +45,7 @@ public class HomeFragment extends Fragment implements NextcloudOperationReadFold
     private NextcloudWrapper mNextCloudWrapper;
     private DataHandlerSql mDataHandlerSql;
     private ArrayList<String> mSupportedExtensions = new ArrayList<String>(Arrays.asList(".jpg", ".jpeg", ".png"));
-    private ArrayList<String> mMediaPaths;
+    private ArrayList<RemotePath> mMediaPaths;
     // private Handler mHandlerTmp = new Handler();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -91,13 +92,13 @@ public class HomeFragment extends Fragment implements NextcloudOperationReadFold
         else {
             Log.d(TAG, "mNextCloudWrapper Cannot connect to Nextcloud. Server, username or password is not set");
         }
-
+        
         mDataHandlerSql = new DataHandlerSql(getActivity());
-        mDataHandlerSql.insertMediaPath("/Test1/");
-        mDataHandlerSql.insertMediaPath("/Test2/");
+        mDataHandlerSql.insertMediaPath("/Test1/", true);
+        mDataHandlerSql.insertMediaPath("/Test2/", false);
         mMediaPaths = mDataHandlerSql.getAllPaths();
-        for (String path : mMediaPaths) {
-            Log.d(TAG, "->Path: " + path);
+        for (RemotePath remotePath : mMediaPaths) {
+            Log.d(TAG, "->Path: " + remotePath.path + " show: " + remotePath.show);
         }
 
 

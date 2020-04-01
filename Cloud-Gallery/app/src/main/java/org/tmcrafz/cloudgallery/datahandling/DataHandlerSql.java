@@ -21,9 +21,10 @@ public class DataHandlerSql extends SQLiteOpenHelper {
 
     private final static String MEDIA_PATHS_COL_ID = "id";
     private final static String MEDIA_PATHS_COL_REMOTE_PATH = "path";
+    private final static String MEDIA_PATHS_COL_SHOW = "show";
 
     private final static String SQL_CREATE_MEDIA_PATH_TABLE = "CREATE TABLE " + MEDIA_PATHS_TABLE
-            + " (" + MEDIA_PATHS_COL_ID + " INTEGER PRIMARY KEY, " + MEDIA_PATHS_COL_REMOTE_PATH + " TEXT)";
+            + " (" + MEDIA_PATHS_COL_ID + " INTEGER PRIMARY KEY, " + MEDIA_PATHS_COL_REMOTE_PATH + " TEXT, " + MEDIA_PATHS_COL_SHOW + " INTEGER)";
 
     private final static String SQL_DELETE_MEDIA_PATH_TABLE =
             "DROP TABLE IF EXISTS " + MEDIA_PATHS_TABLE;
@@ -68,28 +69,31 @@ public class DataHandlerSql extends SQLiteOpenHelper {
 //        return cursor.getCount();
 //    }
 
-    public long insertMediaPath(String path) {
+    public long insertMediaPath(String path, boolean shown) {
         if (isMediaPathExisting(path)) {
             return -1;
         }
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(MEDIA_PATHS_COL_REMOTE_PATH, path);
+        values.put(MEDIA_PATHS_COL_SHOW, shown ? 1 : 0);
         long rowID = db.insert(MEDIA_PATHS_TABLE, null, values);
         db.close();
         return rowID;
     }
 
-    public ArrayList<String> getAllPaths() {
-        ArrayList<String> pathList = new ArrayList<String>();
+    public ArrayList<RemotePath> getAllPaths() {
+        ArrayList<RemotePath> pathList = new ArrayList<RemotePath>();
         String selectQuery = "SELECT * FROM " + MEDIA_PATHS_TABLE;
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
-                String path = cursor.getString(1);
-                pathList.add(path);
+                RemotePath remotePath = new RemotePath();
+                remotePath.path = cursor.getString(1);
+                remotePath.show = cursor.getInt(2) == 1 ? true : false;
+                pathList.add(remotePath);
             } while (cursor.moveToNext());
         }
         db.close();
@@ -102,7 +106,7 @@ public class DataHandlerSql extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void clearMediaPaths(String path) {
+    public void clearMediaPaths() {
         SQLiteDatabase db = getReadableDatabase();
         db.delete(MEDIA_PATHS_TABLE, "1", null);
         db.close();
