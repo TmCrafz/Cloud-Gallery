@@ -24,13 +24,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.owncloud.android.lib.resources.files.model.RemoteFile;
 
+import org.apache.http.entity.StringEntity;
 import org.tmcrafz.cloudgallery.R;
 import org.tmcrafz.cloudgallery.adapters.GalleryAdapter;
+import org.tmcrafz.cloudgallery.datahandling.DataHandlerSql;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudOperationDownloadFile;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudOperationReadFolder;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudWrapper;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,16 +41,17 @@ import java.util.List;
 public class HomeFragment extends Fragment implements NextcloudOperationReadFolder.onReadFolderFinishedListener , NextcloudOperationDownloadFile.onDownloadFileFinishedListener {
     private static String TAG = HomeFragment.class.getCanonicalName();
 
+    private EditText mEditTextPath;
+    private RecyclerView mRecyclerViewGallery;
+    private GridLayoutManager mGridLayoutManagerGallery;
+    private GalleryAdapter mGalleryAdapter;
+    private ArrayList<String> mImagePaths;
+
     private HomeViewModel homeViewModel;
     private NextcloudWrapper mNextCloudWrapper;
-
-    EditText mEditTextPath;
-    RecyclerView mRecyclerViewGallery;
-    GridLayoutManager mGridLayoutManagerGallery;
-    GalleryAdapter mGalleryAdapter;
-    ArrayList<String> mImagePaths;
-
-    ArrayList<String> mSupportedExtensions = new ArrayList<String>(Arrays.asList(".jpg", ".jpeg", ".png"));
+    private DataHandlerSql mDataHandlerSql;
+    private ArrayList<String> mSupportedExtensions = new ArrayList<String>(Arrays.asList(".jpg", ".jpeg", ".png"));
+    private ArrayList<String> mMediaPaths;
     // private Handler mHandlerTmp = new Handler();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -90,6 +94,15 @@ public class HomeFragment extends Fragment implements NextcloudOperationReadFold
         else {
             Log.d(TAG, "mNextCloudWrapper Cannot connect to Nextcloud. Server, username or password is not set");
         }
+
+        mDataHandlerSql = new DataHandlerSql(getActivity());
+        mDataHandlerSql.insertMediaPath("/Test1/");
+        mDataHandlerSql.insertMediaPath("/Test2/");
+        mMediaPaths = mDataHandlerSql.getAllPaths();
+        for (String path : mMediaPaths) {
+            Log.d(TAG, "->Path: " + path);
+        }
+
 
         return root;
     }

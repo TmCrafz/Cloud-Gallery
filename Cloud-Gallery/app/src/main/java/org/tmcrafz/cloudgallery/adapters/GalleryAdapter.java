@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.tmcrafz.cloudgallery.R;
-import org.tmcrafz.cloudgallery.ui.home.HomeFragment;
 
 import java.util.ArrayList;
 
