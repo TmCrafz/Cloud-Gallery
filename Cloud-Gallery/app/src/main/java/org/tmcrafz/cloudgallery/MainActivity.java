@@ -20,7 +20,7 @@ import androidx.appcompat.widget.Toolbar;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudWrapper;
 
 public class MainActivity extends AppCompatActivity {
-    private static String TAG = NextcloudWrapper.class.getCanonicalName();
+    private static String TAG = MainActivity.class.getCanonicalName();
     private AppBarConfiguration mAppBarConfiguration;
 
     @Override

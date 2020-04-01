@@ -1,7 +1,7 @@
 package org.tmcrafz.cloudgallery.ui.home;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -10,33 +10,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.owncloud.android.lib.resources.files.model.RemoteFile;
 
-import org.apache.http.entity.StringEntity;
 import org.tmcrafz.cloudgallery.R;
 import org.tmcrafz.cloudgallery.adapters.GalleryAdapter;
 import org.tmcrafz.cloudgallery.datahandling.DataHandlerSql;
+import org.tmcrafz.cloudgallery.ui.ShowPicturesActivity;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudOperationDownloadFile;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudOperationReadFolder;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudWrapper;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class HomeFragment extends Fragment implements NextcloudOperationReadFolder.onReadFolderFinishedListener , NextcloudOperationDownloadFile.onDownloadFileFinishedListener {
     private static String TAG = HomeFragment.class.getCanonicalName();
@@ -69,9 +62,13 @@ public class HomeFragment extends Fragment implements NextcloudOperationReadFold
         buttonShow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                String path = mEditTextPath.getText().toString();
+//                //downloadAndShowPicture(path);
+//                loadContentOfFolder(path);
                 String path = mEditTextPath.getText().toString();
-                //downloadAndShowPicture(path);
-                loadContentOfFolder(path);
+                Intent intent = new Intent(getActivity(), ShowPicturesActivity.class);
+                intent.putExtra(ShowPicturesActivity.EXTRA_PATH_TO_SHOW, path);
+                startActivity(intent);
             }
         });
 
