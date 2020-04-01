@@ -12,6 +12,16 @@
             android:id="@+id/nav_gallery"
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/menu_gallery" />
+
+        <item
+            android:id="@+id/nav_cloud_folders"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="@string/menu_cloud_folders" />
+
+        <item
+            android:id="@+id/nav_albums"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="@string/menu_albums" />
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_menu_slideshow"
