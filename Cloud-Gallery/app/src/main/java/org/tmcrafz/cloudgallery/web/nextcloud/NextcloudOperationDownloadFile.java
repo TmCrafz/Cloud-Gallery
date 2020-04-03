@@ -28,8 +28,9 @@ public class NextcloudOperationDownloadFile extends NextcloudOperation implement
     }
 
     // File is saved in targetDirectory + filePath (location on Server)
-    public void downloadFile(String cloudFilePath, File targetDirectory, OwnCloudClient client) {
-        DownloadFileRemoteOperation downloadOperation = new DownloadFileRemoteOperation(cloudFilePath, targetDirectory.getAbsolutePath());
+    public void downloadFile(String remoteFilePath, String targetDirectory, OwnCloudClient client) {
+        File targetDirFile = new File(targetDirectory);
+        DownloadFileRemoteOperation downloadOperation = new DownloadFileRemoteOperation(remoteFilePath, targetDirFile.getAbsolutePath());
         downloadOperation.addDatatransferProgressListener(this);
         downloadOperation.execute(client, this, mHandler);
 

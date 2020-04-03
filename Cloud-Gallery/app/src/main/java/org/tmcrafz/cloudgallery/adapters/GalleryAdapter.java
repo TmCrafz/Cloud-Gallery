@@ -42,7 +42,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.PlaceVie
 
     @Override
     public void onBindViewHolder(@NonNull PlaceViewHolder holder, int position) {
-        String path = mMediaPaths.getItem(position).localPath;
+        String path = mMediaPaths.getItem(position).localFilePath;
         //String path = mMediaPaths.get(position).localPath;
         // Show when media is not already loaded in view and file is downloaded
         if (!holder.mIsLoaded && mMediaPaths.getItem(position).isLocalFileDownloaded) {
@@ -73,12 +73,15 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.PlaceVie
     // ToDo: Find different solution and encapsulate
     public static class AdapterItems {
         public static class Item {
-            public String localPath;
+            // The directory where the downloaded item is stored
+            public String localDirectory;
+            public String localFilePath;
             public String remotePath;
             public boolean isLocalFileDownloaded;
 
-            public Item(String localPath, String remotePath, boolean isLocalFileDownloaded) {
-                this.localPath = localPath;
+            public Item(String localDirectory, String localFilePath, String remotePath, boolean isLocalFileDownloaded) {
+                this.localDirectory = localDirectory;
+                this.localFilePath = localFilePath;
                 this.remotePath = remotePath;
                 this.isLocalFileDownloaded = isLocalFileDownloaded;
             }
@@ -94,13 +97,13 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.PlaceVie
             return mItems;
         }
 
-        public void add(String localPath, String remotePath, boolean isLocalFileDownloaded) {
-            mItems.add(new Item(localPath, remotePath, isLocalFileDownloaded));
+        public void add(String localDirectory, String localFilePath, String remotePath, boolean isLocalFileDownloaded) {
+            mItems.add(new Item(localDirectory, localFilePath, remotePath, isLocalFileDownloaded));
         }
 
-        public boolean updateDownloadStatusByLocalPath(String localPath, boolean isLocalFileDownloaded) {
+        public boolean updateDownloadStatusByLocalFilePath(String localFilePath, boolean isLocalFileDownloaded) {
             for (Item item : mItems) {
-                if (item.localPath.equals(localPath)) {
+                if (item.localFilePath.equals(localFilePath)) {
                     item.isLocalFileDownloaded = isLocalFileDownloaded;
                     return true;
                 }
@@ -108,13 +111,13 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.PlaceVie
             return false;
         }
 
-        public int getPositionByLocalPath(String localPath) {
+        public int getPositionByLocalFilePath(String localFilePath) {
             for (int i = 0; i < mItems.size(); i++) {
                 Item item = mItems.get(i);
                 if (item == null) {
                     continue;
                 }
-                if (item.localPath.equals(localPath)) {
+                if (item.localFilePath.equals(localFilePath)) {
                     return i;
                 }
             }
@@ -125,21 +128,21 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.PlaceVie
             return mItems.get(position);
         }
 
-        public void removeByLocalPath(String localPath) {
+        public void removeByLocalFilePath(String localFilePath) {
             Iterator<Item> itemIterator = mItems.iterator();
             while (itemIterator.hasNext()) {
                 Item item = itemIterator.next();
-                if (item.localPath.equals(localPath)) {
+                if (item.localFilePath.equals(localFilePath)) {
                     itemIterator.remove();
                 }
             }
         }
 
-        public void removeLocalPaths(HashSet<String> localPaths) {
+        public void removeLocalFilePaths(HashSet<String> localFilePaths) {
             Iterator<Item> itemIterator = mItems.iterator();
             while (itemIterator.hasNext()) {
                 Item item = itemIterator.next();
-                if (localPaths.contains(item.localPath)) {
+                if (localFilePaths.contains(item.localFilePath)) {
                     itemIterator.remove();
                 }
             }

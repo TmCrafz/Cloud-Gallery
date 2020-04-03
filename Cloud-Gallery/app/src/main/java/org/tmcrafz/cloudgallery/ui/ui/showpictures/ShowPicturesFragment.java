@@ -123,17 +123,17 @@ public class ShowPicturesFragment extends Fragment implements NextcloudOperation
                     // The final path
                     String localFilePath = localDirectoryPath + remoteFilePath;
                     Log.d(TAG, "->localFilePath before Add: " + localFilePath);
-                    mMediaPaths.add(localFilePath, remoteFilePath, false);;
+                    mMediaPaths.add(localDirectoryPath, localFilePath, remoteFilePath, false);;
                 }
             }
             // Start download files
             for(GalleryAdapter.AdapterItems.Item item : mMediaPaths.getArrayList()) {
-                String localFilePath = item.localPath;
+                String localFilePath = item.localFilePath;
                 String remoteFilePath = item.remotePath;
                 String identifierDownload = localFilePath;
                 Log.d(TAG, "->Start Downloads Local File Path: " + localFilePath + " remoteFilePath: " + remoteFilePath + " identifierDownload " + identifierDownload);
                 // Start downloading file
-                mNextCloudWrapper.startDownload(remoteFilePath, new File(localDirectoryPath), identifierDownload , new Handler(),this);
+                mNextCloudWrapper.startDownload(remoteFilePath, localDirectoryPath, identifierDownload , new Handler(),this);
             }
             mGalleryAdapter.notifyDataSetChanged();
         }
@@ -150,9 +150,9 @@ public class ShowPicturesFragment extends Fragment implements NextcloudOperation
             File file = new File(localFilePath);
             if (file.exists() && file.isFile()) {
                 // We note that the file is available now
-                mMediaPaths.updateDownloadStatusByLocalPath(localFilePath, true);
+                mMediaPaths.updateDownloadStatusByLocalFilePath(localFilePath, true);
                 //mGalleryAdapter.notifyDataSetChanged();
-                int updatePosition = mMediaPaths.getPositionByLocalPath(localFilePath);
+                int updatePosition = mMediaPaths.getPositionByLocalFilePath(localFilePath);
                 Log.d(TAG, "->Local File Path: " + localFilePath + " position: " + updatePosition);
                 mGalleryAdapter.notifyItemChanged(updatePosition);
                 //mGalleryAdapter.notifyDataSetChanged();

@@ -46,11 +46,11 @@ public class NextcloudWrapper {
         mRunningOperations.add(operation);
         operation.readFolder(path, mClient);
     }
-    
-    public void startDownload(String filePath, File targetDirectory, String identifier, Handler handler, NextcloudOperationDownloadFile.onDownloadFileFinishedListener listener) {
+
+    public void startDownload(String remoteFilePath, String targetDirectory, String identifier, Handler handler, NextcloudOperationDownloadFile.onDownloadFileFinishedListener listener) {
         NextcloudOperationDownloadFile operation = new NextcloudOperationDownloadFile(identifier, handler, listener);
         mRunningOperations.add(operation);
-        operation.downloadFile(filePath, targetDirectory, mClient);
+        operation.downloadFile(remoteFilePath, targetDirectory, mClient);
     }
 
     // Delete all finished operations
