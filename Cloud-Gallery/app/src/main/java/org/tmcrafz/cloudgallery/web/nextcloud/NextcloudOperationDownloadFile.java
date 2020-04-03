@@ -1,7 +1,6 @@
 package org.tmcrafz.cloudgallery.web.nextcloud;
 
 import android.os.Handler;
-import android.util.Log;
 
 import com.owncloud.android.lib.common.OwnCloudClient;
 import com.owncloud.android.lib.common.network.OnDatatransferProgressListener;
@@ -11,18 +10,17 @@ import com.owncloud.android.lib.common.operations.RemoteOperationResult;
 import com.owncloud.android.lib.resources.files.DownloadFileRemoteOperation;
 
 import java.io.File;
-import java.util.ArrayList;
 
 public class NextcloudOperationDownloadFile extends NextcloudOperation implements OnRemoteOperationListener, OnDatatransferProgressListener {
     private static String TAG = NextcloudOperationDownloadFile.class.getCanonicalName();
 
-    public interface onDownloadFileFinishedListener {
-        void onDownloadFileFinished(String identifier, boolean isSuccesfull);
+    public interface OnDownloadFileFinishedListener {
+        void onDownloadFileFinished(String identifier, boolean isSuccessful);
     }
 
-    private onDownloadFileFinishedListener mListener;
+    private OnDownloadFileFinishedListener mListener;
 
-    public NextcloudOperationDownloadFile(String identifier, Handler handler, onDownloadFileFinishedListener listener) {
+    public NextcloudOperationDownloadFile(String identifier, Handler handler, OnDownloadFileFinishedListener listener) {
         super(identifier, handler);
         mListener = listener;
     }

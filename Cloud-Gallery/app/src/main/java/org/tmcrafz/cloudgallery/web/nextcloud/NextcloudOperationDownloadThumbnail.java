@@ -20,7 +20,7 @@ public class NextcloudOperationDownloadThumbnail extends NextcloudOperation {
     private static String TAG = NextcloudOperationDownloadThumbnail.class.getCanonicalName();
 
     public interface OnDownloadThumbnailFinishedListener {
-        void onDownloadThumbnailFinished(String identifier, boolean isSuccesfull);
+        void onDownloadThumbnailFinished(String identifier, boolean isSuccessful);
     }
 
     OnDownloadThumbnailFinishedListener mListener;
@@ -95,8 +95,8 @@ public class NextcloudOperationDownloadThumbnail extends NextcloudOperation {
 
         @Override
         protected void onPostExecute(Boolean aBoolean) {
-            boolean isSuccesfull = aBoolean.booleanValue();
-            mListener.onDownloadThumbnailFinished(mIdentifier, isSuccesfull);
+            boolean isSuccessful = aBoolean.booleanValue();
+            mListener.onDownloadThumbnailFinished(mIdentifier, isSuccessful);
         }
 
     }

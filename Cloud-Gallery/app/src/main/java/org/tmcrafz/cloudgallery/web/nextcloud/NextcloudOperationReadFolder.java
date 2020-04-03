@@ -1,29 +1,25 @@
 package org.tmcrafz.cloudgallery.web.nextcloud;
 
 import android.os.Handler;
-import android.util.Log;
 
 import com.owncloud.android.lib.common.OwnCloudClient;
 import com.owncloud.android.lib.common.operations.OnRemoteOperationListener;
 import com.owncloud.android.lib.common.operations.RemoteOperation;
 import com.owncloud.android.lib.common.operations.RemoteOperationResult;
-import com.owncloud.android.lib.resources.files.DownloadFileRemoteOperation;
 import com.owncloud.android.lib.resources.files.ReadFolderRemoteOperation;
-import com.owncloud.android.lib.resources.files.model.RemoteFile;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 
 public class NextcloudOperationReadFolder extends NextcloudOperation implements OnRemoteOperationListener {
-    public interface onReadFolderFinishedListener {
+    public interface OnReadFolderFinishedListener {
         void onReadFolderFinished(String identifier, boolean isSuccesfull, ArrayList<Object> files);
     }
 
     private static String TAG = NextcloudOperationReadFolder.class.getCanonicalName();
-    private onReadFolderFinishedListener mListener;
+    private OnReadFolderFinishedListener mListener;
 
-    public NextcloudOperationReadFolder(String identifier, Handler handler, onReadFolderFinishedListener listener) {
+    public NextcloudOperationReadFolder(String identifier, Handler handler, OnReadFolderFinishedListener listener) {
         super(identifier, handler);
         mListener = listener;
     }

@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import android.os.Handler;
 import android.util.Log;
@@ -21,6 +22,7 @@ import com.owncloud.android.lib.resources.files.model.RemoteFile;
 
 import org.tmcrafz.cloudgallery.R;
 import org.tmcrafz.cloudgallery.adapters.GalleryAdapter;
+import org.tmcrafz.cloudgallery.datahandling.StorageHandler;
 import org.tmcrafz.cloudgallery.web.CloudFunctions;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudOperationDownloadFile;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudOperationDownloadThumbnail;
@@ -32,8 +34,8 @@ import java.util.ArrayList;
 
 
 public class ShowPicturesFragment extends Fragment implements
-        NextcloudOperationReadFolder.onReadFolderFinishedListener,
-        NextcloudOperationDownloadFile.onDownloadFileFinishedListener,
+        NextcloudOperationReadFolder.OnReadFolderFinishedListener,
+        NextcloudOperationDownloadFile.OnDownloadFileFinishedListener,
         NextcloudOperationDownloadThumbnail.OnDownloadThumbnailFinishedListener {
     private static String TAG = ShowPicturesFragment.class.getCanonicalName();
 
@@ -90,6 +92,8 @@ public class ShowPicturesFragment extends Fragment implements
         mMediaPaths = new GalleryAdapter.AdapterItems();
         mGalleryAdapter = new GalleryAdapter(getActivity(), mMediaPaths);
         mRecyclerViewGallery.setAdapter(mGalleryAdapter);
+        // Turn off animation when item change
+        ((SimpleItemAnimator) mRecyclerViewGallery.getItemAnimator()).setSupportsChangeAnimations(false);
 
         return root;
     }
@@ -99,13 +103,13 @@ public class ShowPicturesFragment extends Fragment implements
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(ShowPicturesViewModel.class);
 
-        String remoteFilePath = "/Test1/file4.jpg";
-        String targetDirectory = getContext().getExternalFilesDir(null).toString() + "/CloudGallery/cache/thumbnails";
-        // identifier = localFilePath
-        String identifier = targetDirectory + remoteFilePath;
-        int thumbnailSizePixel = 128;
-        //mNextCloudWrapper.downloadThumbnail("/Test1/file4.jpg", getContext().getExternalFilesDir(null).toString() + "/CloudGallery/cache/thumbnails/Test1/file4.jpg");
-        mNextCloudWrapper.startThumbnailDownload(remoteFilePath, targetDirectory, thumbnailSizePixel, identifier, this);
+//        String remoteFilePath = "/Test1/file4.jpg";
+//        String targetDirectory = StorageHandler.getThumbnailDir(getContext());
+//        // identifier = localFilePath
+//        String identifier = targetDirectory + remoteFilePath;
+//        int thumbnailSizePixel = 128;
+//        //mNextCloudWrapper.downloadThumbnail("/Test1/file4.jpg", getContext().getExternalFilesDir(null).toString() + "/CloudGallery/cache/thumbnails/Test1/file4.jpg");
+//        mNextCloudWrapper.startThumbnailDownload(remoteFilePath, targetDirectory, thumbnailSizePixel, identifier, this);
 
 
         mNextCloudWrapper.startReadFolder(mPath, mPath, new Handler(), this);
@@ -114,9 +118,10 @@ public class ShowPicturesFragment extends Fragment implements
     }
 
     @Override
-    public void onReadFolderFinished(String identifier, boolean isSuccesfull, ArrayList<Object> files) {
-        if (isSuccesfull) {
-            String localDirectoryPath = getContext().getExternalFilesDir(null).toString() + "/CloudGallery";
+    public void onReadFolderFinished(String identifier, boolean isSuccessful, ArrayList<Object> files) {
+        if (isSuccessful) {
+            int thumbnailSizePixel = 1280;
+            String localDirectoryPath = StorageHandler.getThumbnailDir(getContext());
             for(Object fileTmp: files) {
                 RemoteFile file = (RemoteFile)  fileTmp;
                 String remoteFilePath = file.getRemotePath();
@@ -136,10 +141,11 @@ public class ShowPicturesFragment extends Fragment implements
             for(GalleryAdapter.AdapterItems.Item item : mMediaPaths.getArrayList()) {
                 String localFilePath = item.localFilePath;
                 String remoteFilePath = item.remotePath;
-                String identifierDownload = localFilePath;
-                Log.d(TAG, "->Start Downloads Local File Path: " + localFilePath + " remoteFilePath: " + remoteFilePath + " identifierDownload " + identifierDownload);
+                String identifierThumbnail = localFilePath;
+                Log.d(TAG, "->Start Downloads Local File Path: " + localFilePath + " remoteFilePath: " + remoteFilePath + " identifierDownload " + identifierThumbnail);
                 // Start downloading file
-                mNextCloudWrapper.startDownload(remoteFilePath, localDirectoryPath, identifierDownload , new Handler(),this);
+                //mNextCloudWrapper.startDownload(remoteFilePath, localDirectoryPath, identifierDownload , new Handler(),this);
+                mNextCloudWrapper.startThumbnailDownload(remoteFilePath, localDirectoryPath, thumbnailSizePixel, identifierThumbnail, this);
             }
             mGalleryAdapter.notifyDataSetChanged();
         }
@@ -150,8 +156,38 @@ public class ShowPicturesFragment extends Fragment implements
     }
 
     @Override
-    public void onDownloadFileFinished(String identifier, boolean isSuccesfull) {
-        if (isSuccesfull) {
+    public void onDownloadFileFinished(String identifier, boolean isSuccessful) {
+//        if (isSuccessful) {
+//            String localFilePath = identifier;
+//            File file = new File(localFilePath);
+//            if (file.exists() && file.isFile()) {
+//                // We note that the file is available now
+//                mMediaPaths.updateDownloadStatusByLocalFilePath(localFilePath, true);
+//                //mGalleryAdapter.notifyDataSetChanged();
+//                int updatePosition = mMediaPaths.getPositionByLocalFilePath(localFilePath);
+//                Log.d(TAG, "->Local File Path: " + localFilePath + " position: " + updatePosition);
+//                mGalleryAdapter.notifyItemChanged(updatePosition);
+//                //mGalleryAdapter.notifyDataSetChanged();
+//            }
+//            else {
+//                Log.e(TAG, "Showing downloaded file with identifier '" + identifier +"' failed. File is not existing or directory");
+//                if (!file.exists()) {
+//                    Log.e(TAG, "-->File is not existing");
+//                }
+//                if (!file.isFile()) {
+//                    Log.e(TAG, "-->Not a file");
+//                }
+//            }
+//        }
+//        else {
+//            Log.e(TAG, "Download of file with identifier failed: " + identifier);
+//        }
+//        mNextCloudWrapper.cleanOperations();
+    }
+
+    @Override
+    public void onDownloadThumbnailFinished(String identifier, boolean isSuccessful) {
+        if (isSuccessful) {
             String localFilePath = identifier;
             File file = new File(localFilePath);
             if (file.exists() && file.isFile()) {
@@ -159,8 +195,7 @@ public class ShowPicturesFragment extends Fragment implements
                 mMediaPaths.updateDownloadStatusByLocalFilePath(localFilePath, true);
                 //mGalleryAdapter.notifyDataSetChanged();
                 int updatePosition = mMediaPaths.getPositionByLocalFilePath(localFilePath);
-                Log.d(TAG, "->Local File Path: " + localFilePath + " position: " + updatePosition);
-                mGalleryAdapter.notifyItemChanged(updatePosition);
+                mGalleryAdapter.notifyItemChanged(updatePosition, null);
                 //mGalleryAdapter.notifyDataSetChanged();
             }
             else {
@@ -174,18 +209,8 @@ public class ShowPicturesFragment extends Fragment implements
             }
         }
         else {
-            Log.e(TAG, "Download of file with identifier failed: " + identifier);
+            Log.e(TAG, "Download Thumbnail with identifier failed: " + identifier);
         }
         mNextCloudWrapper.cleanOperations();
-    }
-
-    @Override
-    public void onDownloadThumbnailFinished(String identifier, boolean isSuccesfull) {
-        if (isSuccesfull) {
-            Log.d(TAG, "Succesdully downloaded thumbnail with identifier: " + identifier);
-        }
-        else {
-            Log.e(TAG, "Error downloading thumbnail with identifier: " + identifier);
-        }
     }
 }

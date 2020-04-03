@@ -41,4 +41,7 @@ dependencies {
     // remove after entire switch of nextcloud lib to lib v2
     implementation "commons-httpclient:commons-httpclient:3.1@jar"
     implementation group: 'commons-io', name: 'commons-io', version: '2.6'
+    //Glide
+    //implementation 'com.github.bumptech.glide:glide:4.11.0'
+    //annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 }

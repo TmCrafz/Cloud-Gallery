@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.tmcrafz.cloudgallery.R;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -43,14 +44,22 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.PlaceVie
     @Override
     public void onBindViewHolder(@NonNull PlaceViewHolder holder, int position) {
         String path = mMediaPaths.getItem(position).localFilePath;
-        //String path = mMediaPaths.get(position).localPath;
+        File file = new File(path);
+
         // Show when media is not already loaded in view and file is downloaded
-        if (!holder.mIsLoaded && mMediaPaths.getItem(position).isLocalFileDownloaded) {
+        //if (!holder.mIsLoaded && mMediaPaths.getItem(position).isLocalFileDownloaded) {
+        if (file.exists() && file.isFile()) {
             holder.mImagePreview.setImageBitmap(BitmapFactory.decodeFile(path));
+//            Glide.with(mContext)
+//                    .load(new File(path)) // Uri of the picture
+//                    .into(holder.mImagePreview);
         }
         // Else show placeholder
         else {
             holder.mImagePreview.setImageResource(R.drawable.ic_launcher_foreground);
+//            Glide.with(mContext)
+//                    .load(R.drawable.ic_launcher_foreground) // Uri of the picture
+//                    .into(holder.mImagePreview);
         }
     }
 
@@ -62,7 +71,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.PlaceVie
     public static class PlaceViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView mImagePreview;
-        public boolean mIsLoaded = false;
+        //public boolean mIsLoaded = false;
 
         public PlaceViewHolder(@NonNull View itemView) {
             super(itemView);
