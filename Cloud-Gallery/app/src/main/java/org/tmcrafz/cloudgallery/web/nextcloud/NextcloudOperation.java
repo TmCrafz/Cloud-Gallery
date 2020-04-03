@@ -16,6 +16,11 @@ public class NextcloudOperation {
         mIsFinished = false;
     }
 
+    public NextcloudOperation(String identifier) {
+        mIdentifier = identifier;
+        mIsFinished = false;
+    }
+
     protected String getIdentifier() {
         return mIdentifier;
     }

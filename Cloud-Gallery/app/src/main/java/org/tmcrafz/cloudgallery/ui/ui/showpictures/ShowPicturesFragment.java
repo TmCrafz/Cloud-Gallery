@@ -16,28 +16,25 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.TextView;
 
 import com.owncloud.android.lib.resources.files.model.RemoteFile;
 
 import org.tmcrafz.cloudgallery.R;
 import org.tmcrafz.cloudgallery.adapters.GalleryAdapter;
-import org.tmcrafz.cloudgallery.datahandling.DataHandlerSql;
-import org.tmcrafz.cloudgallery.datahandling.RemotePath;
 import org.tmcrafz.cloudgallery.web.CloudFunctions;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudOperationDownloadFile;
+import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudOperationDownloadThumbnail;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudOperationReadFolder;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudWrapper;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 
-public class ShowPicturesFragment extends Fragment implements NextcloudOperationReadFolder.onReadFolderFinishedListener , NextcloudOperationDownloadFile.onDownloadFileFinishedListener{
+public class ShowPicturesFragment extends Fragment implements
+        NextcloudOperationReadFolder.onReadFolderFinishedListener,
+        NextcloudOperationDownloadFile.onDownloadFileFinishedListener,
+        NextcloudOperationDownloadThumbnail.OnDownloadThumbnailFinishedListener {
     private static String TAG = ShowPicturesFragment.class.getCanonicalName();
 
     public final static String EXTRA_PATH_TO_SHOW = "path_to_show";
@@ -101,6 +98,15 @@ public class ShowPicturesFragment extends Fragment implements NextcloudOperation
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(ShowPicturesViewModel.class);
+
+        String remoteFilePath = "/Test1/file4.jpg";
+        String targetDirectory = getContext().getExternalFilesDir(null).toString() + "/CloudGallery/cache/thumbnails";
+        // identifier = localFilePath
+        String identifier = targetDirectory + remoteFilePath;
+        int thumbnailSizePixel = 128;
+        //mNextCloudWrapper.downloadThumbnail("/Test1/file4.jpg", getContext().getExternalFilesDir(null).toString() + "/CloudGallery/cache/thumbnails/Test1/file4.jpg");
+        mNextCloudWrapper.startThumbnailDownload(remoteFilePath, targetDirectory, thumbnailSizePixel, identifier, this);
+
 
         mNextCloudWrapper.startReadFolder(mPath, mPath, new Handler(), this);
 
@@ -173,4 +179,13 @@ public class ShowPicturesFragment extends Fragment implements NextcloudOperation
         mNextCloudWrapper.cleanOperations();
     }
 
+    @Override
+    public void onDownloadThumbnailFinished(String identifier, boolean isSuccesfull) {
+        if (isSuccesfull) {
+            Log.d(TAG, "Succesdully downloaded thumbnail with identifier: " + identifier);
+        }
+        else {
+            Log.e(TAG, "Error downloading thumbnail with identifier: " + identifier);
+        }
+    }
 }
