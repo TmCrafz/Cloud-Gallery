@@ -1,5 +1,6 @@
 package org.tmcrafz.cloudgallery.web.nextcloud;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
@@ -42,10 +43,10 @@ public class NextcloudWrapper {
         operation.downloadFile(remoteFilePath, targetDirectory, mClient);
     }
 
-    public void startThumbnailDownload(String remoteFilePath, String targetDirectory, int size, String identifier, NextcloudOperationDownloadThumbnail.OnDownloadThumbnailFinishedListener listener) {
+    public void startThumbnailDownload(Activity context, String remoteFilePath, String targetDirectory, int size, String identifier, NextcloudOperationDownloadThumbnail.OnDownloadThumbnailFinishedListener listener) {
         NextcloudOperationDownloadThumbnail operation = new NextcloudOperationDownloadThumbnail(identifier, listener);
         mRunningOperations.add(operation);
-        operation.downloadThumbnail(remoteFilePath, targetDirectory, size, mClient);
+        operation.downloadThumbnail(context, remoteFilePath, targetDirectory, size, mClient);
     }
 
     // Delete all finished operations

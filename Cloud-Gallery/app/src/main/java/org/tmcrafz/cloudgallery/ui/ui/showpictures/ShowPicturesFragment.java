@@ -145,7 +145,7 @@ public class ShowPicturesFragment extends Fragment implements
                 Log.d(TAG, "->Start Downloads Local File Path: " + localFilePath + " remoteFilePath: " + remoteFilePath + " identifierDownload " + identifierThumbnail);
                 // Start downloading file
                 //mNextCloudWrapper.startDownload(remoteFilePath, localDirectoryPath, identifierDownload , new Handler(),this);
-                mNextCloudWrapper.startThumbnailDownload(remoteFilePath, localDirectoryPath, thumbnailSizePixel, identifierThumbnail, this);
+                mNextCloudWrapper.startThumbnailDownload(getActivity(), remoteFilePath, localDirectoryPath, thumbnailSizePixel, identifierThumbnail, this);
             }
             mGalleryAdapter.notifyDataSetChanged();
         }

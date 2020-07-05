@@ -1,5 +1,7 @@
 package org.tmcrafz.cloudgallery.web.nextcloud;
 
+import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -30,11 +32,11 @@ public class NextcloudOperationDownloadThumbnail extends NextcloudOperation {
         mListener = listener;
     }
 
-    public void downloadThumbnail(String remoteFilePath, String targetDirectory, int size, OwnCloudClient client) {
+    public void downloadThumbnail(Activity context, String remoteFilePath, String targetDirectory, int size, OwnCloudClient client) {
         DownloadThumbnailTask asyncTask = new DownloadThumbnailTask(mIdentifier, mListener);
         String localFilePath = targetDirectory;
         Log.d(TAG, "downloadThumbnail: remoteFilePath: " + remoteFilePath + " targetDirectory: " + targetDirectory + " size: " + size);
-        asyncTask.execute(new TaskParams(remoteFilePath, localFilePath, size, client));
+        asyncTask.execute(context, remoteFilePath, localFilePath, size, client);
     }
 
     private class TaskParams {
@@ -51,6 +53,62 @@ public class NextcloudOperationDownloadThumbnail extends NextcloudOperation {
         }
     }
 
+
+    private class DownloadThumbnailTask {
+        private OnDownloadThumbnailFinishedListener mListener;
+        private String mIdentifier;
+
+        public DownloadThumbnailTask(String identifier, OnDownloadThumbnailFinishedListener listener) {
+            mListener = listener;
+            mIdentifier = identifier;
+        }
+
+        public void execute(final Activity context, final String remoteFilePath, final String localFilePath, final int sizePixels, final OwnCloudClient client) {
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    boolean isSuccessful = false;
+                    // Uri:  "/index.php/apps/files/api/v1/thumbnail/" + pxW + "/" + pxH + Uri.encode(remoteFilePath, "/");
+                    String uri = client.getBaseUri() + "/index.php/apps/files/api/v1/thumbnail/" + sizePixels + "/" + sizePixels + Uri.encode(remoteFilePath, "/");
+                    Log.d(TAG, "downloadThumbnail: generate thumbnail: " + remoteFilePath + " URI: " + uri);
+                    GetMethod gMethod = new GetMethod(uri);
+                    gMethod.setRequestHeader("Cookie", "nc_sameSiteCookielax=true;nc_sameSiteCookiestrict=true");
+                    gMethod.setRequestHeader(RemoteOperation.OCS_API_HEADER, RemoteOperation.OCS_API_HEADER_VALUE);
+                    try {
+                        int status = client.executeMethod(gMethod);
+                        if (status == HttpStatus.SC_OK) {
+                            File file = new File(localFilePath + remoteFilePath);
+                            InputStream inputStream = gMethod.getResponseBodyAsStream();
+                            FileUtils.copyInputStreamToFile(inputStream, file);
+                            isSuccessful = true;
+                        }
+                        else {
+                            client.exhaustResponse(gMethod.getResponseBodyAsStream());
+                            isSuccessful = false;
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        isSuccessful = false;
+                    }
+                    final boolean result = isSuccessful;
+                    // Update UI
+                    context.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d("TAG", "runOnUiThread. Result: " + result);
+                            mListener.onDownloadThumbnailFinished(mIdentifier, result);
+                        }
+                    });
+                }
+            };
+            thread.start();
+        }
+
+    }
+
+
+
+/*
     private class DownloadThumbnailTask extends AsyncTask<TaskParams, Void, Boolean> {
         private OnDownloadThumbnailFinishedListener mListener;
         private String mIdentifier;
@@ -98,6 +156,7 @@ public class NextcloudOperationDownloadThumbnail extends NextcloudOperation {
             boolean isSuccessful = aBoolean.booleanValue();
             mListener.onDownloadThumbnailFinished(mIdentifier, isSuccessful);
         }
-
     }
+
+ */
 }
