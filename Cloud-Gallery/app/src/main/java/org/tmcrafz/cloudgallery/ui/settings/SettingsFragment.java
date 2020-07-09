@@ -9,8 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,18 +16,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.owncloud.android.lib.resources.files.model.RemoteFile;
-
 import org.tmcrafz.cloudgallery.R;
-import org.tmcrafz.cloudgallery.adapters.GalleryAdapter;
-import org.tmcrafz.cloudgallery.datahandling.StorageHandler;
-import org.tmcrafz.cloudgallery.ui.ui.showpictures.ShowPicturesFragment;
-import org.tmcrafz.cloudgallery.web.CloudFunctions;
-import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudOperationReadFolder;
-import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudWrapper;
-
-import java.util.ArrayList;
-import java.util.HashMap;
+import org.tmcrafz.cloudgallery.ui.showpictures.ShowPicturesFragment;
 
 public class SettingsFragment extends Fragment {
 

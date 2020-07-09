@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import org.tmcrafz.cloudgallery.R;
-import org.tmcrafz.cloudgallery.ui.ui.showpictures.ShowPicturesFragment;
+import org.tmcrafz.cloudgallery.ui.showpictures.ShowPicturesFragment;
 
 
 public class ShowPicturesActivity extends AppCompatActivity {

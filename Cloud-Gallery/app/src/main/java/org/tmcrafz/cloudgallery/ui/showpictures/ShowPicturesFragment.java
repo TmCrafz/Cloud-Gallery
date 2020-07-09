@@ -1,4 +1,4 @@
-package org.tmcrafz.cloudgallery.ui.ui.showpictures;
+package org.tmcrafz.cloudgallery.ui.showpictures;
 
 import androidx.lifecycle.ViewModelProviders;
 
