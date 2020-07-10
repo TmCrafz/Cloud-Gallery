@@ -2,7 +2,6 @@ package org.tmcrafz.cloudgallery.adapters;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,18 +16,16 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
-public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.PlaceViewHolder> {
-    private static String TAG = GalleryAdapter.class.getCanonicalName();
+public class RecyclerviewGalleryAdapter extends RecyclerView.Adapter<RecyclerviewGalleryAdapter.PlaceViewHolder> {
+    private static String TAG = RecyclerviewGalleryAdapter.class.getCanonicalName();
 
     private Context mContext;
     // Key: remote path, Value: local path
     // value is local path
     private AdapterItems mMediaPaths;
 
-    public GalleryAdapter(Context context, AdapterItems mediaPaths) {
+    public RecyclerviewGalleryAdapter(Context context, AdapterItems mediaPaths) {
         mContext = context;
         mMediaPaths = mediaPaths;
     }

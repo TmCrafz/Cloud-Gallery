@@ -10,28 +10,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.owncloud.android.lib.resources.files.model.RemoteFile;
 
 import org.tmcrafz.cloudgallery.R;
-import org.tmcrafz.cloudgallery.adapters.GalleryAdapter;
 import org.tmcrafz.cloudgallery.datahandling.DataHandlerSql;
-import org.tmcrafz.cloudgallery.datahandling.RemotePath;
 import org.tmcrafz.cloudgallery.ui.ShowPicturesActivity;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudOperationReadFolder;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudWrapper;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 
 public class HomeFragment extends Fragment implements
         NextcloudOperationReadFolder.OnReadFolderFinishedListener {

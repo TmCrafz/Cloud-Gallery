@@ -21,7 +21,7 @@ import android.view.ViewGroup;
 import com.owncloud.android.lib.resources.files.model.RemoteFile;
 
 import org.tmcrafz.cloudgallery.R;
-import org.tmcrafz.cloudgallery.adapters.GalleryAdapter;
+import org.tmcrafz.cloudgallery.adapters.RecyclerviewGalleryAdapter;
 import org.tmcrafz.cloudgallery.datahandling.StorageHandler;
 import org.tmcrafz.cloudgallery.web.CloudFunctions;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudOperationDownloadFile;
@@ -46,9 +46,9 @@ public class ShowPicturesFragment extends Fragment implements
     private NextcloudWrapper mNextCloudWrapper;
     private RecyclerView mRecyclerViewGallery;
     private GridLayoutManager mGridLayoutManagerGallery;
-    private GalleryAdapter mGalleryAdapter;
+    private RecyclerviewGalleryAdapter mRecyclerviewGalleryAdapter;
 
-    private GalleryAdapter.AdapterItems mMediaPaths;
+    private RecyclerviewGalleryAdapter.AdapterItems mMediaPaths;
 
     public static ShowPicturesFragment newInstance(String path) {
         ShowPicturesFragment fragment = new ShowPicturesFragment();
@@ -76,8 +76,6 @@ public class ShowPicturesFragment extends Fragment implements
         else {
             Log.d(TAG, "mNextCloudWrapper Cannot connect to Nextcloud. Server, username or password is not set");
         }
-
-
     }
 
     @Nullable
@@ -89,9 +87,9 @@ public class ShowPicturesFragment extends Fragment implements
         mRecyclerViewGallery = root.findViewById(R.id.recyclerView_gallery);
         mGridLayoutManagerGallery = new GridLayoutManager(getActivity(), 2);
         mRecyclerViewGallery.setLayoutManager(mGridLayoutManagerGallery);
-        mMediaPaths = new GalleryAdapter.AdapterItems();
-        mGalleryAdapter = new GalleryAdapter(getActivity(), mMediaPaths);
-        mRecyclerViewGallery.setAdapter(mGalleryAdapter);
+        mMediaPaths = new RecyclerviewGalleryAdapter.AdapterItems();
+        mRecyclerviewGalleryAdapter = new RecyclerviewGalleryAdapter(getActivity(), mMediaPaths);
+        mRecyclerViewGallery.setAdapter(mRecyclerviewGalleryAdapter);
         // Turn off animation when item change
         ((SimpleItemAnimator) mRecyclerViewGallery.getItemAnimator()).setSupportsChangeAnimations(false);
 
@@ -138,7 +136,7 @@ public class ShowPicturesFragment extends Fragment implements
                 }
             }
             // Start download files
-            for(GalleryAdapter.AdapterItems.Item item : mMediaPaths.getArrayList()) {
+            for(RecyclerviewGalleryAdapter.AdapterItems.Item item : mMediaPaths.getArrayList()) {
                 String localFilePath = item.localFilePath;
                 String remoteFilePath = item.remotePath;
                 String identifierThumbnail = localFilePath;
@@ -147,7 +145,7 @@ public class ShowPicturesFragment extends Fragment implements
                 //mNextCloudWrapper.startDownload(remoteFilePath, localDirectoryPath, identifierDownload , new Handler(),this);
                 mNextCloudWrapper.startThumbnailDownload(getActivity(), remoteFilePath, localDirectoryPath, thumbnailSizePixel, identifierThumbnail, this);
             }
-            mGalleryAdapter.notifyDataSetChanged();
+            mRecyclerviewGalleryAdapter.notifyDataSetChanged();
         }
         else {
             Log.e(TAG, "Could not read remote folder with identifier: " + identifier);
@@ -195,7 +193,7 @@ public class ShowPicturesFragment extends Fragment implements
                 mMediaPaths.updateDownloadStatusByLocalFilePath(localFilePath, true);
                 //mGalleryAdapter.notifyDataSetChanged();
                 int updatePosition = mMediaPaths.getPositionByLocalFilePath(localFilePath);
-                mGalleryAdapter.notifyItemChanged(updatePosition, null);
+                mRecyclerviewGalleryAdapter.notifyItemChanged(updatePosition, null);
                 //mGalleryAdapter.notifyDataSetChanged();
             }
             else {
