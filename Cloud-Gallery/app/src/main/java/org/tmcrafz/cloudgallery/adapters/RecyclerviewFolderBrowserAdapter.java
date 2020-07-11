@@ -29,13 +29,18 @@ public class RecyclerviewFolderBrowserAdapter extends RecyclerView.Adapter {
 
     private static String TAG = RecyclerviewFolderBrowserAdapter.class.getCanonicalName();
 
+    public final static int LAYOUT_MODE_LINEAR = 0;
+    public final static int LAYOUT_MODE_GRID = 1;
+
     private OnLoadFolderData mContext;
     private ArrayList<GalleryItem> mData;
+    private int mLayoutMode;
 
 
-    public RecyclerviewFolderBrowserAdapter(OnLoadFolderData context, ArrayList<GalleryItem> pathData) {
+    public RecyclerviewFolderBrowserAdapter(OnLoadFolderData context, ArrayList<GalleryItem> pathData, int layoutMode) {
         mContext = context;
         mData = pathData;
+        mLayoutMode = layoutMode;
     }
 
     @Override
@@ -72,15 +77,16 @@ public class RecyclerviewFolderBrowserAdapter extends RecyclerView.Adapter {
                                                        ((OnLoadFolderData) mContext).onLoadPathData(folderPath); }
                                                }
                 );
-                ((FolderTypeViewHolder) holder).mButtonShow.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Context context = v.getContext();
-                    Intent intent = new Intent(context, ShowPicturesActivity.class);
-                    intent.putExtra(ShowPicturesActivity.EXTRA_PATH_TO_SHOW, folderPath);
-                    context.startActivity(intent);
-                    }
-                });
+                ((FolderTypeViewHolder) holder).mFolderImagePreview.setImageResource(R.drawable.ic_baseline_folder_24);
+//                ((FolderTypeViewHolder) holder).mButtonShow.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Context context = v.getContext();
+//                    Intent intent = new Intent(context, ShowPicturesActivity.class);
+//                    intent.putExtra(ShowPicturesActivity.EXTRA_PATH_TO_SHOW, folderPath);
+//                    context.startActivity(intent);
+//                    }
+//                });
                 break;
             case GalleryItem.TYPE_IMAGE:
                 GalleryItem.ImageItem imageData = (GalleryItem.ImageItem) data;
@@ -114,20 +120,18 @@ public class RecyclerviewFolderBrowserAdapter extends RecyclerView.Adapter {
     }
 
     public static class FolderTypeViewHolder extends RecyclerView.ViewHolder {
-        //public ImageView mImagePreview;
+        public ImageView mFolderImagePreview;
         public TextView mTextFolderName;
-        public Button mButtonShow;
         //public boolean mIsLoaded = false;
 
         public FolderTypeViewHolder(@NonNull View itemView) {
             super(itemView);
-            mTextFolderName = itemView.findViewById(R.id.textView_image_name);
-            mButtonShow = itemView.findViewById(R.id.button_show);
+            mTextFolderName = itemView.findViewById(R.id.textView_folder_name);
+            mFolderImagePreview = itemView.findViewById(R.id.imageView_folder_preview);
         }
     }
 
     public static class ImageTypeViewHolder extends RecyclerView.ViewHolder {
-
         public ImageView mImagePreview;
         public TextView mTextView;
         //public boolean mIsLoaded = false;

@@ -8,12 +8,16 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -43,18 +47,52 @@ public class CloudFolderFragment extends Fragment implements
 
     private CloudFolderViewModel mViewModel;
     private RecyclerView mRecyclerViewFolderBrowser;
+    private int mLayoutMode;
     private LinearLayoutManager mLayoutManager;
+    private GridLayoutManager mGridLayoutManagerGallery;
     private RecyclerviewFolderBrowserAdapter mRecyclerViewFolderBrowserAdapter;
 
+    private Menu mMenu;
+
     private NextcloudWrapper mNextCloudWrapper;
+
 
     public static CloudFolderFragment newInstance() {
         return new CloudFolderFragment();
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.gallery_view_menu, menu);
+        mMenu = menu;
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_change_view:
+                // Switch from linear to grid layout
+                if (mLayoutMode == RecyclerviewFolderBrowserAdapter.LAYOUT_MODE_LINEAR) {
+                    mMenu.findItem(R.id.action_change_view).setIcon(R.drawable.ic_baseline_view_list_24);
+                    mLayoutMode = RecyclerviewFolderBrowserAdapter.LAYOUT_MODE_GRID;
+
+                }
+                // Switch from grid layout to linear
+                else if (mLayoutMode == RecyclerviewFolderBrowserAdapter.LAYOUT_MODE_GRID) {
+                    mMenu.findItem(R.id.action_change_view).setIcon(R.drawable.ic_baseline_view_module_grid_24);
+                    mLayoutMode = RecyclerviewFolderBrowserAdapter.LAYOUT_MODE_LINEAR;
+                }
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Use own custom Menu for fragment
+        setHasOptionsMenu(true);
 
         SharedPreferences prefs = getActivity().getSharedPreferences(getString(R.string.key_preference_file_key), 0);
         String serverUrl = prefs.getString(getString(R.string.key_preference_server_url), "");
@@ -75,10 +113,19 @@ public class CloudFolderFragment extends Fragment implements
         View root = inflater.inflate(R.layout.fragment_cloud_folder, container, false);
 
         mRecyclerViewFolderBrowser = root.findViewById(R.id.recyclerView_gallery);
+        mLayoutMode = RecyclerviewFolderBrowserAdapter.LAYOUT_MODE_LINEAR;
+
         mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerViewFolderBrowser.setLayoutManager(mLayoutManager);
+        /*
+         mGridLayoutManagerGallery = new GridLayoutManager(getActivity(), 2);
+        mRecyclerViewGallery.setLayoutManager(mGridLayoutManagerGallery);
 
-        mRecyclerViewFolderBrowserAdapter = new RecyclerviewFolderBrowserAdapter((RecyclerviewFolderBrowserAdapter.OnLoadFolderData) this, mItemData);
+         */
+
+
+        mRecyclerViewFolderBrowserAdapter = new RecyclerviewFolderBrowserAdapter(
+                (RecyclerviewFolderBrowserAdapter.OnLoadFolderData) this, mItemData, mLayoutMode);
         mRecyclerViewFolderBrowser.setAdapter(mRecyclerViewFolderBrowserAdapter);
         // Turn off animation when item change
         //((SimpleItemAnimator) mRecyclerViewGallery.getItemAnimator()).setSupportsChangeAnimations(false);
@@ -140,6 +187,7 @@ public class CloudFolderFragment extends Fragment implements
                                 GalleryItem.TYPE_IMAGE, localDirectoryPath, localFilePath, remotePath, false));
                 }
             }
+            GalleryItem.sortByName(mItemData);
             // Show loaded path in recyclerview adapter
             mRecyclerViewFolderBrowserAdapter.notifyDataSetChanged();
         }

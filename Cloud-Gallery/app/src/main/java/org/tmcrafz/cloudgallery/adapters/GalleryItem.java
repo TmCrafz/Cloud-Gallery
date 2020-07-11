@@ -1,10 +1,13 @@
 package org.tmcrafz.cloudgallery.adapters;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 
-public class GalleryItem {
+public abstract class GalleryItem {
 
     public static final int TYPE_FOLDER = 0;
     public static final int TYPE_IMAGE = 1;
@@ -15,6 +18,35 @@ public class GalleryItem {
         this.type = type;
     }
 
+    // Get the identifier used for sorting
+    public abstract String getSortIdentifier();
+
+    // Sort by name and type
+    public static void sortByName(ArrayList<GalleryItem> items) {
+        Collections.sort(items,
+                new Comparator<GalleryItem>() {
+                    @Override
+                    public int compare(GalleryItem o1, GalleryItem o2) {
+                        // When both are folders we only sort by "identifier" (usually name)
+                        if (o1.type == GalleryItem.TYPE_FOLDER && o2.type == GalleryItem.TYPE_FOLDER) {
+                            return o1.getSortIdentifier().compareTo(o2.getSortIdentifier());
+                        }
+                        // Same here
+                        else if (o1.type == GalleryItem.TYPE_IMAGE && o2.type == GalleryItem.TYPE_IMAGE) {
+                            return o1.getSortIdentifier().compareTo(o2.getSortIdentifier());
+                        }
+                        // Folders are shown first, so they are first in the collections
+                        else if (o1.type == GalleryItem.TYPE_FOLDER && o2.type == GalleryItem.TYPE_IMAGE) {
+                            return -1;
+                        }
+                        // Then images are following
+                        else if (o1.type == GalleryItem.TYPE_IMAGE && o2.type == GalleryItem.TYPE_FOLDER) {
+                            return 1;
+                        }
+                        return 0;
+                    }
+                });
+    }
 
     public static class FolderItem extends GalleryItem {
         public String name;
@@ -25,6 +57,11 @@ public class GalleryItem {
             this.name = name;
             this.path = path;
         }
+
+        @Override
+        public String getSortIdentifier() {
+            return name;
+        }
     }
 
 
@@ -34,6 +71,7 @@ public class GalleryItem {
         public String localFilePath;
         public String remotePath;
         public boolean isLocalFileDownloaded;
+        public String name;
 
         public ImageItem(int type, String localDirectory, String localFilePath, String remotePath, boolean isLocalFileDownloaded) {
             super(type);
@@ -41,6 +79,13 @@ public class GalleryItem {
             this.localFilePath = localFilePath;
             this.remotePath = remotePath;
             this.isLocalFileDownloaded = isLocalFileDownloaded;
+            File file = new File(remotePath);
+            this.name = file.getName();
+        }
+
+        @Override
+        public String getSortIdentifier() {
+            return name;
         }
 
         public static boolean updateDownloadStatusByLocalFilePath(ArrayList<GalleryItem> items, String localFilePath, boolean isLocalFileDownloaded) {
