@@ -107,9 +107,7 @@ public class RecyclerviewGalleryBrowserAdapter extends RecyclerView.Adapter {
                 //if (!holder.mIsLoaded && mMediaPaths.getItem(position).isLocalFileDownloaded) {
                 if (file.exists() && file.isFile()) {
                     String imagename = file.getName();
-                    if (mLayoutMode == LAYOUT_MODE_LINEAR) {
-                        ((ImageTypeViewHolder) holder).mTextView.setText(imagename);
-                    }
+                    ((ImageTypeViewHolder) holder).mTextView.setText(imagename);
                     ((ImageTypeViewHolder) holder).mImagePreview.setImageBitmap(BitmapFactory.decodeFile(imagePath));
 //            Glide.with(mContext)
 //                    .load(new File(path)) // Uri of the picture
