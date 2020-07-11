@@ -1,5 +1,7 @@
 package org.tmcrafz.cloudgallery.adapters;
 
+import android.util.Log;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,7 +56,7 @@ public abstract class GalleryItem {
 
         public FolderItem(int type, String name, String path) {
             super(type);
-            this.name = name;
+            this.name = formatName(name);
             this.path = path;
         }
 
@@ -62,6 +64,18 @@ public abstract class GalleryItem {
         public String getSortIdentifier() {
             return name;
         }
+
+        private String formatName(String name) {
+            // Remove / at beginning and end of path name
+            if (name.length() > 1 && name.charAt(0) == '/') {
+                name = name.substring(1);
+            }
+            if (name.length() > 1 && name.charAt(name.length() - 1) == '/') {
+                name = name.substring(0, name.length() - 1);
+            }
+            return name;
+        }
+
     }
 
 
@@ -79,8 +93,12 @@ public abstract class GalleryItem {
             this.localFilePath = localFilePath;
             this.remotePath = remotePath;
             this.isLocalFileDownloaded = isLocalFileDownloaded;
+            this.name = createName(remotePath);
+        }
+
+        private String createName(String remotePath) {
             File file = new File(remotePath);
-            this.name = file.getName();
+            return file.getName();
         }
 
         @Override
