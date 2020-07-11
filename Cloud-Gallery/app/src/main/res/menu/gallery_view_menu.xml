@@ -5,6 +5,6 @@
         android:id="@+id/action_change_view"
         android:orderInCategory="100"
         android:icon="@drawable/ic_baseline_view_module_grid_24"
-        android:title="Refresh"
+        android:title="@string/title_menu_item_action_change_view"
         app:showAsAction="always" />
 </menu>

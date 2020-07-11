@@ -29,6 +29,8 @@
     <string name="key_preference_username">username</string>
     <string name="key_preference_password">password</string>
 
+    <string name="title_menu_item_action_change_view">change view</string>
+
     <string name="text_placeholder_folder_name">Folder</string>
     <string name="text_placeholder_image_name">Image</string>
     <string name="text_button_show_gallery">Show</string>

@@ -9,6 +9,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -19,7 +20,13 @@ import androidx.appcompat.widget.Toolbar;
 
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudWrapper;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
+    public interface OnBackPressedListener {
+        void onBackPressed();
+    }
+
     private static String TAG = MainActivity.class.getCanonicalName();
     private AppBarConfiguration mAppBarConfiguration;
 
@@ -62,5 +69,15 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void onBackPressed() {
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        for(Fragment fragment : fragments){
+            if(fragment != null && fragment instanceof OnBackPressedListener)
+                ((OnBackPressedListener)fragment).onBackPressed();
+        }
+        super.onBackPressed();
     }
 }

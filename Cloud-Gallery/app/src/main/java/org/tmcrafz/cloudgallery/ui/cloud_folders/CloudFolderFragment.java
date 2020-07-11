@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 
 import com.owncloud.android.lib.resources.files.model.RemoteFile;
 
+import org.tmcrafz.cloudgallery.MainActivity;
 import org.tmcrafz.cloudgallery.R;
 import org.tmcrafz.cloudgallery.adapters.GalleryItem;
 import org.tmcrafz.cloudgallery.adapters.RecyclerviewGalleryBrowserAdapter;
@@ -38,7 +39,8 @@ import java.util.ArrayList;
 public class CloudFolderFragment extends Fragment implements
         NextcloudOperationReadFolder.OnReadFolderFinishedListener,
         NextcloudOperationDownloadThumbnail.OnDownloadThumbnailFinishedListener,
-        RecyclerviewGalleryBrowserAdapter.OnLoadFolderData {
+        RecyclerviewGalleryBrowserAdapter.OnLoadFolderData,
+        MainActivity.OnBackPressedListener {
     private static String TAG = CloudFolderFragment.class.getCanonicalName();
 
     private ArrayList<GalleryItem> mItemData = new ArrayList<GalleryItem>();
@@ -241,4 +243,8 @@ public class CloudFolderFragment extends Fragment implements
     }
 
 
+    @Override
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed Fragment");
+    }
 }
