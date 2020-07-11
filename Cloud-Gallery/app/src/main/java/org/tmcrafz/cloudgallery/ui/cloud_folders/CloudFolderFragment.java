@@ -156,12 +156,12 @@ public class CloudFolderFragment extends Fragment implements
 
             //mPathData.add(new RecyclerviewFolderBrowserAdapter.AdapterItem("Back", ""));
             // ToDo: Temporary add entry to come back. Add functionality with androids "back button" instead
-            if (!mCurrentPath.equals(ABSOLUTE_ROOT_PATH)) {
-                String parent = (new File(mCurrentPath)).getParent();
-                mItemData.add(
-                        new GalleryItem.FolderItem(
-                                GalleryItem.TYPE_FOLDER, getString(R.string.text_folder_browser_back), parent));
-            }
+//            if (!mCurrentPath.equals(ABSOLUTE_ROOT_PATH)) {
+//                String parent = (new File(mCurrentPath)).getParent();
+//                mItemData.add(
+//                        new GalleryItem.FolderItem(
+//                                GalleryItem.TYPE_FOLDER, getString(R.string.text_folder_browser_back), parent));
+//            }
             for(Object fileTmp: files) {
                 RemoteFile file = (RemoteFile)  fileTmp;
                 String mimetype = file.getMimeType();
@@ -170,13 +170,10 @@ public class CloudFolderFragment extends Fragment implements
                 if (mimetype.equals("DIR")) {
                     String name = remotePath;
                     //Log.d(TAG, "remotePath Path: " + remotePath);
-                    mItemData.add(
-                            new GalleryItem.FolderItem(
-                                    GalleryItem.TYPE_FOLDER, name, remotePath));
-                    // ToDo: Ausnahme für aktuellen Ordner (bpen Eintrag, außerhalb von Adapter?)
-                    //if (!remotePath.equals(identifier)) {
-                    //    mNextCloudWrapper.startReadFolder(remotePath, remotePath, new Handler(), this);
-                    //}
+                    // Don't show actual folder as entry
+                    if (!remotePath.equals(identifier)) {
+                        mItemData.add(new GalleryItem.FolderItem(GalleryItem.TYPE_FOLDER, name, remotePath));
+                    }
                 }
                 else if (CloudFunctions.isFileSupportedPicture(remotePath)) {
                     // Download Picture
