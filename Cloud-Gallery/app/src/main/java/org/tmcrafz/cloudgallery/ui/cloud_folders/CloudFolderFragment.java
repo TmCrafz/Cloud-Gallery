@@ -47,10 +47,9 @@ public class CloudFolderFragment extends Fragment implements
 
     private CloudFolderViewModel mViewModel;
     private RecyclerView mRecyclerViewFolderBrowser;
-    private int mLayoutMode;
-    private LinearLayoutManager mLayoutManager;
-    private GridLayoutManager mGridLayoutManagerGallery;
-    private RecyclerviewGalleryBrowserAdapter mRecyclerViewFolderBrowserAdapter;
+    private LinearLayoutManager mLinearLayoutManager;
+    private GridLayoutManager mGridLayoutManager;
+    private RecyclerviewGalleryBrowserAdapter mAdapter;
 
     private Menu mMenu;
 
@@ -73,15 +72,18 @@ public class CloudFolderFragment extends Fragment implements
         switch (item.getItemId()) {
             case R.id.action_change_view:
                 // Switch from linear to grid layout
-                if (mLayoutMode == RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_LINEAR) {
+                if (mAdapter.getLayoutMode() == RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_LINEAR) {
                     mMenu.findItem(R.id.action_change_view).setIcon(R.drawable.ic_baseline_view_list_24);
-                    mLayoutMode = RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_GRID;
-
+                    mAdapter.setLayoutMode(RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_GRID);
+                    mRecyclerViewFolderBrowser.setLayoutManager(mGridLayoutManager);
+                    mRecyclerViewFolderBrowser.setAdapter(mAdapter);
                 }
                 // Switch from grid layout to linear
-                else if (mLayoutMode == RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_GRID) {
+                else if (mAdapter.getLayoutMode() == RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_GRID) {
                     mMenu.findItem(R.id.action_change_view).setIcon(R.drawable.ic_baseline_view_module_grid_24);
-                    mLayoutMode = RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_LINEAR;
+                    mAdapter.setLayoutMode(RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_LINEAR);
+                    mRecyclerViewFolderBrowser.setLayoutManager(mLinearLayoutManager);
+                    mRecyclerViewFolderBrowser.setAdapter(mAdapter);
                 }
                 break;
         }
@@ -113,20 +115,21 @@ public class CloudFolderFragment extends Fragment implements
         View root = inflater.inflate(R.layout.fragment_cloud_folder, container, false);
 
         mRecyclerViewFolderBrowser = root.findViewById(R.id.recyclerView_gallery);
-        mLayoutMode = RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_LINEAR;
+        int layoutMode = RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_LINEAR;
 
-        mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        mRecyclerViewFolderBrowser.setLayoutManager(mLayoutManager);
-        /*
-         mGridLayoutManagerGallery = new GridLayoutManager(getActivity(), 2);
-        mRecyclerViewGallery.setLayoutManager(mGridLayoutManagerGallery);
+        mLinearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
+        if (layoutMode == RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_LINEAR) {
+            mRecyclerViewFolderBrowser.setLayoutManager(mLinearLayoutManager);
+        }
+        else {
+            mRecyclerViewFolderBrowser.setLayoutManager(mGridLayoutManager);
+        }
 
-         */
 
-
-        mRecyclerViewFolderBrowserAdapter = new RecyclerviewGalleryBrowserAdapter(
-                (RecyclerviewGalleryBrowserAdapter.OnLoadFolderData) this, mItemData, mLayoutMode);
-        mRecyclerViewFolderBrowser.setAdapter(mRecyclerViewFolderBrowserAdapter);
+        mAdapter = new RecyclerviewGalleryBrowserAdapter(
+                (RecyclerviewGalleryBrowserAdapter.OnLoadFolderData) this, mItemData, layoutMode);
+        mRecyclerViewFolderBrowser.setAdapter(mAdapter);
         // Turn off animation when item change
         //((SimpleItemAnimator) mRecyclerViewGallery.getItemAnimator()).setSupportsChangeAnimations(false);
         onLoadPathData(mCurrentPath);
@@ -189,7 +192,7 @@ public class CloudFolderFragment extends Fragment implements
             }
             GalleryItem.sortByName(mItemData);
             // Show loaded path in recyclerview adapter
-            mRecyclerViewFolderBrowserAdapter.notifyDataSetChanged();
+            mAdapter.notifyDataSetChanged();
         }
         else {
             Log.e(TAG, "Could not read remote folder with identifier: " + identifier);
@@ -207,7 +210,7 @@ public class CloudFolderFragment extends Fragment implements
                 GalleryItem.ImageItem.updateDownloadStatusByLocalFilePath(mItemData, localFilePath, true);
                 //mGalleryAdapter.notifyDataSetChanged();
                 int updatePosition = GalleryItem.ImageItem.getPositionByLocalFilePath(mItemData, localFilePath);
-                mRecyclerViewFolderBrowserAdapter.notifyItemChanged(updatePosition, null);
+                mAdapter.notifyItemChanged(updatePosition, null);
                 //mGalleryAdapter.notifyDataSetChanged();
             }
             else {

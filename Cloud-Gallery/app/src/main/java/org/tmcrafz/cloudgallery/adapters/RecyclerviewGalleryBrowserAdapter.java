@@ -37,6 +37,14 @@ public class RecyclerviewGalleryBrowserAdapter extends RecyclerView.Adapter {
         mLayoutMode = layoutMode;
     }
 
+    public void setLayoutMode(int mode) {
+        mLayoutMode = mode;
+    }
+
+    public int getLayoutMode() {
+        return mLayoutMode;
+    }
+
     @Override
     public int getItemViewType(int position) {
         return mData.get(position).type;
@@ -48,10 +56,18 @@ public class RecyclerviewGalleryBrowserAdapter extends RecyclerView.Adapter {
         View view;
         switch (viewType) {
             case GalleryItem.TYPE_FOLDER:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_folder_entry_line, parent, false);
+                if (mLayoutMode == LAYOUT_MODE_LINEAR) {
+                    view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_folder_entry_linear, parent, false);
+                } else {
+                    view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_folder_entry_grid, parent, false);
+                }
                 return new FolderTypeViewHolder(view);
             case GalleryItem.TYPE_IMAGE:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_image_entry_line, parent, false);
+                if (mLayoutMode == LAYOUT_MODE_LINEAR) {
+                    view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_image_entry_linear, parent, false);
+                } else {
+                    view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_image_entry_grid, parent, false);
+                }
                 return new ImageTypeViewHolder(view);
         }
         return null;
@@ -91,7 +107,9 @@ public class RecyclerviewGalleryBrowserAdapter extends RecyclerView.Adapter {
                 //if (!holder.mIsLoaded && mMediaPaths.getItem(position).isLocalFileDownloaded) {
                 if (file.exists() && file.isFile()) {
                     String imagename = file.getName();
-                    ((ImageTypeViewHolder) holder).mTextView.setText(imagename);
+                    if (mLayoutMode == LAYOUT_MODE_LINEAR) {
+                        ((ImageTypeViewHolder) holder).mTextView.setText(imagename);
+                    }
                     ((ImageTypeViewHolder) holder).mImagePreview.setImageBitmap(BitmapFactory.decodeFile(imagePath));
 //            Glide.with(mContext)
 //                    .load(new File(path)) // Uri of the picture
