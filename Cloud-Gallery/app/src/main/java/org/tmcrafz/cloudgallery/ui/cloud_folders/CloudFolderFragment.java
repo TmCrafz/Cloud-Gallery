@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import com.owncloud.android.lib.resources.files.model.RemoteFile;
 
 import org.tmcrafz.cloudgallery.R;
+import org.tmcrafz.cloudgallery.adapters.GalleryItem;
 import org.tmcrafz.cloudgallery.adapters.RecyclerviewFolderBrowserAdapter;
 import org.tmcrafz.cloudgallery.datahandling.StorageHandler;
 import org.tmcrafz.cloudgallery.web.CloudFunctions;
@@ -36,7 +37,7 @@ public class CloudFolderFragment extends Fragment implements
         RecyclerviewFolderBrowserAdapter.OnLoadFolderData {
     private static String TAG = CloudFolderFragment.class.getCanonicalName();
 
-    private ArrayList<RecyclerviewFolderBrowserAdapter.AdapterItem> mItemData = new ArrayList<RecyclerviewFolderBrowserAdapter.AdapterItem>();
+    private ArrayList<GalleryItem> mItemData = new ArrayList<GalleryItem>();
     private final String ABSOLUTE_ROOT_PATH = "/";
     private String mCurrentPath = ABSOLUTE_ROOT_PATH;
 
@@ -106,8 +107,8 @@ public class CloudFolderFragment extends Fragment implements
             if (!mCurrentPath.equals(ABSOLUTE_ROOT_PATH)) {
                 String parent = (new File(mCurrentPath)).getParent();
                 mItemData.add(
-                        new RecyclerviewFolderBrowserAdapter.AdapterItem.FolderItem(
-                                RecyclerviewFolderBrowserAdapter.AdapterItem.TYPE_FOLDER, getString(R.string.text_folder_browser_back), parent));
+                        new GalleryItem.FolderItem(
+                                GalleryItem.TYPE_FOLDER, getString(R.string.text_folder_browser_back), parent));
             }
             for(Object fileTmp: files) {
                 RemoteFile file = (RemoteFile)  fileTmp;
@@ -118,8 +119,8 @@ public class CloudFolderFragment extends Fragment implements
                     String name = remotePath;
                     //Log.d(TAG, "remotePath Path: " + remotePath);
                     mItemData.add(
-                            new RecyclerviewFolderBrowserAdapter.AdapterItem.FolderItem(
-                                    RecyclerviewFolderBrowserAdapter.AdapterItem.TYPE_FOLDER, name, remotePath));
+                            new GalleryItem.FolderItem(
+                                    GalleryItem.TYPE_FOLDER, name, remotePath));
                     // ToDo: Ausnahme für aktuellen Ordner (bpen Eintrag, außerhalb von Adapter?)
                     //if (!remotePath.equals(identifier)) {
                     //    mNextCloudWrapper.startReadFolder(remotePath, remotePath, new Handler(), this);
@@ -135,8 +136,8 @@ public class CloudFolderFragment extends Fragment implements
                     String localFilePath = localDirectoryPath + remotePath;
                     Log.d(TAG, "->localFilePath before Add: " + localFilePath);
                     mItemData.add(
-                            new RecyclerviewFolderBrowserAdapter.AdapterItem.ImageItem(
-                                RecyclerviewFolderBrowserAdapter.AdapterItem.TYPE_IMAGE, localDirectoryPath, localFilePath, remotePath, false));
+                            new GalleryItem.ImageItem(
+                                GalleryItem.TYPE_IMAGE, localDirectoryPath, localFilePath, remotePath, false));
                 }
             }
             // Show loaded path in recyclerview adapter
@@ -155,9 +156,9 @@ public class CloudFolderFragment extends Fragment implements
             File file = new File(localFilePath);
             if (file.exists() && file.isFile()) {
                 // We note that the file is available now
-                RecyclerviewFolderBrowserAdapter.AdapterItem.ImageItem.updateDownloadStatusByLocalFilePath(mItemData, localFilePath, true);
+                GalleryItem.ImageItem.updateDownloadStatusByLocalFilePath(mItemData, localFilePath, true);
                 //mGalleryAdapter.notifyDataSetChanged();
-                int updatePosition = RecyclerviewFolderBrowserAdapter.AdapterItem.ImageItem.getPositionByLocalFilePath(mItemData, localFilePath);
+                int updatePosition = GalleryItem.ImageItem.getPositionByLocalFilePath(mItemData, localFilePath);
                 mRecyclerViewFolderBrowserAdapter.notifyItemChanged(updatePosition, null);
                 //mGalleryAdapter.notifyDataSetChanged();
             }

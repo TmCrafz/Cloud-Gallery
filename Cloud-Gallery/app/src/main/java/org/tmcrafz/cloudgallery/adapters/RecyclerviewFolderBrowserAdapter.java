@@ -30,10 +30,10 @@ public class RecyclerviewFolderBrowserAdapter extends RecyclerView.Adapter {
     private static String TAG = RecyclerviewFolderBrowserAdapter.class.getCanonicalName();
 
     private OnLoadFolderData mContext;
-    private ArrayList<AdapterItem> mData;
+    private ArrayList<GalleryItem> mData;
 
 
-    public RecyclerviewFolderBrowserAdapter(OnLoadFolderData context, ArrayList<AdapterItem> pathData) {
+    public RecyclerviewFolderBrowserAdapter(OnLoadFolderData context, ArrayList<GalleryItem> pathData) {
         mContext = context;
         mData = pathData;
     }
@@ -48,10 +48,10 @@ public class RecyclerviewFolderBrowserAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
         switch (viewType) {
-            case AdapterItem.TYPE_FOLDER:
+            case GalleryItem.TYPE_FOLDER:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_folder_entry_line, parent, false);
                 return new FolderTypeViewHolder(view);
-            case AdapterItem.TYPE_IMAGE:
+            case GalleryItem.TYPE_IMAGE:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_image_entry_line, parent, false);
                 return new ImageTypeViewHolder(view);
         }
@@ -60,10 +60,10 @@ public class RecyclerviewFolderBrowserAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        AdapterItem data = mData.get(position);
+        GalleryItem data = mData.get(position);
         switch (data.type) {
-            case AdapterItem.TYPE_FOLDER:
-                AdapterItem.FolderItem folderData = (AdapterItem.FolderItem) data;
+            case GalleryItem.TYPE_FOLDER:
+                GalleryItem.FolderItem folderData = (GalleryItem.FolderItem) data;
                 ((FolderTypeViewHolder) holder).mTextFolderName.setText(folderData.name);
                 final String folderPath = folderData.path;
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -82,8 +82,8 @@ public class RecyclerviewFolderBrowserAdapter extends RecyclerView.Adapter {
                     }
                 });
                 break;
-            case AdapterItem.TYPE_IMAGE:
-                AdapterItem.ImageItem imageData = (AdapterItem.ImageItem) data;
+            case GalleryItem.TYPE_IMAGE:
+                GalleryItem.ImageItem imageData = (GalleryItem.ImageItem) data;
                 String imagePath = imageData.localFilePath;
                 File file = new File(imagePath);
 
@@ -138,104 +138,4 @@ public class RecyclerviewFolderBrowserAdapter extends RecyclerView.Adapter {
             mTextView = itemView.findViewById(R.id.textView_image_name);
         }
     }
-
-    // ToDo: Encapsulate from Adapter
-    public static class AdapterItem {
-        public static class ImageItem extends AdapterItem{
-            // The directory where the downloaded item is stored
-            public String localDirectory;
-            public String localFilePath;
-            public String remotePath;
-            public boolean isLocalFileDownloaded;
-
-            public ImageItem(int type, String localDirectory, String localFilePath, String remotePath, boolean isLocalFileDownloaded) {
-                super(type);
-                this.localDirectory = localDirectory;
-                this.localFilePath = localFilePath;
-                this.remotePath = remotePath;
-                this.isLocalFileDownloaded = isLocalFileDownloaded;
-            }
-
-            // ToDo: encapsulate all the static methods
-            public static boolean updateDownloadStatusByLocalFilePath(ArrayList<AdapterItem> items, String localFilePath, boolean isLocalFileDownloaded) {
-                for (AdapterItem item : items) {
-                    if (item.type != AdapterItem.TYPE_IMAGE) {
-                        continue;
-                    }
-                    ImageItem imageItem = (ImageItem) item;
-                    if (imageItem.localFilePath.equals(localFilePath)) {
-                        imageItem.isLocalFileDownloaded = isLocalFileDownloaded;
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            public static int getPositionByLocalFilePath(ArrayList<AdapterItem> items, String localFilePath) {
-                for (int i = 0; i < items.size(); i++) {
-                    AdapterItem item = items.get(i);
-                    if (item == null) {
-                        continue;
-                    }
-                    if (item.type != AdapterItem.TYPE_IMAGE) {
-                        continue;
-                    }
-                    ImageItem imageItem = (ImageItem) item;
-                    if (imageItem.localFilePath.equals(localFilePath)) {
-                        return i;
-                    }
-                }
-                return -1;
-            }
-
-
-            public static void removeByLocalFilePath(ArrayList<AdapterItem> items, String localFilePath) {
-                Iterator<AdapterItem> itemIterator = items.iterator();
-                while (itemIterator.hasNext()) {
-                    AdapterItem item = itemIterator.next();
-                    if (item.type != AdapterItem.TYPE_IMAGE) {
-                        continue;
-                    }
-                    ImageItem imageItem = (ImageItem) item;
-                    if (imageItem.localFilePath.equals(localFilePath)) {
-                        itemIterator.remove();
-                    }
-                }
-            }
-
-            public static void removeLocalFilePaths(ArrayList<AdapterItem> items, HashSet<String> localFilePaths) {
-                Iterator<AdapterItem> itemIterator = items.iterator();
-                while (itemIterator.hasNext()) {
-                    AdapterItem item = itemIterator.next();
-                    if (item.type != AdapterItem.TYPE_IMAGE) {
-                        continue;
-                    }
-                    ImageItem imageItem = (ImageItem) item;
-                    if (localFilePaths.contains(imageItem.localFilePath)) {
-                        itemIterator.remove();
-                    }
-                }
-            }
-        }
-
-        public static class FolderItem extends AdapterItem {
-            public String name;
-            public String path;
-
-            public FolderItem(int type, String name, String path) {
-                super(type);
-                this.name = name;
-                this.path = path;
-            }
-        }
-        public static final int TYPE_FOLDER = 0;
-        public static final int TYPE_IMAGE = 1;
-
-        public int type;
-
-        public AdapterItem(int type) {
-            this.type = type;
-        }
-    }
-
 }
