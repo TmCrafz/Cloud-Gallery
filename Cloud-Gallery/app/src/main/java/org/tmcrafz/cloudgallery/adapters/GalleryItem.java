@@ -56,7 +56,7 @@ public abstract class GalleryItem {
 
         public FolderItem(int type, String name, String path) {
             super(type);
-            this.name = formatName(name);
+            this.name = name;
             this.path = path;
         }
 
@@ -65,16 +65,16 @@ public abstract class GalleryItem {
             return name;
         }
 
-        private String formatName(String name) {
-            // Remove / at beginning and end of path name
-            if (name.length() > 1 && name.charAt(0) == '/') {
-                name = name.substring(1);
-            }
-            if (name.length() > 1 && name.charAt(name.length() - 1) == '/') {
-                name = name.substring(0, name.length() - 1);
-            }
-            return name;
-        }
+//        private String formatName(String name) {
+//            // Remove / at beginning and end of path name
+//            if (name.length() > 1 && name.charAt(0) == '/') {
+//                name = name.substring(1);
+//            }
+//            if (name.length() > 1 && name.charAt(name.length() - 1) == '/') {
+//                name = name.substring(0, name.length() - 1);
+//            }
+//            return name;
+//        }
 
     }
 

@@ -181,7 +181,7 @@ public class CloudFolderFragment extends Fragment implements
                 String remotePath = file.getRemotePath();
                 //Log.d(TAG, remotePath + ": " + mimetype);
                 if (mimetype.equals("DIR")) {
-                    String name = remotePath;
+                    String name = (new File(remotePath)).getName();
                     //Log.d(TAG, "remotePath Path: " + remotePath);
                     // Don't show actual folder as entry
                     if (!remotePath.equals(identifier)) {
