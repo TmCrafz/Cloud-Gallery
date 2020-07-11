@@ -99,7 +99,9 @@ public class CloudFolderFragment extends Fragment implements
             // ToDo: Temporary add entry to come back. Add functionality with androids "back button" instead
             if (!mCurrentPath.equals(ABSOLUTE_ROOT_PATH)) {
                 String parent = (new File(mCurrentPath)).getParent();
-                mPathData.add(new RecyclerviewFolderBrowserAdapter.AdapterItem(getString(R.string.text_folder_browser_back), parent));
+                mPathData.add(
+                        new RecyclerviewFolderBrowserAdapter.AdapterItem.FolderItem(
+                                RecyclerviewFolderBrowserAdapter.AdapterItem.TYPE_FOLDER, getString(R.string.text_folder_browser_back), parent));
             }
             for(Object fileTmp: files) {
                 RemoteFile file = (RemoteFile)  fileTmp;
@@ -109,7 +111,9 @@ public class CloudFolderFragment extends Fragment implements
                     String remotePath = file.getRemotePath();
                     String name = remotePath;
                     //Log.d(TAG, "remotePath Path: " + remotePath);
-                    mPathData.add(new RecyclerviewFolderBrowserAdapter.AdapterItem(name, remotePath));
+                    mPathData.add(
+                            new RecyclerviewFolderBrowserAdapter.AdapterItem.FolderItem(
+                                    RecyclerviewFolderBrowserAdapter.AdapterItem.TYPE_FOLDER, name, remotePath));
                     // ToDo: Ausnahme für aktuellen Ordner (bpen Eintrag, außerhalb von Adapter?)
                     //if (!remotePath.equals(identifier)) {
                     //    mNextCloudWrapper.startReadFolder(remotePath, remotePath, new Handler(), this);

@@ -44,24 +44,28 @@ public class RecyclerviewFolderBrowserAdapter extends RecyclerView.Adapter<Recyc
     @Override
     public void onBindViewHolder(@NonNull PlaceViewHolder holder, int position) {
         AdapterItem data = mPathData.get(position);
-        holder.mTextFolderName.setText(data.name);
-        final String path = mPathData.get(position).path;
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-                public void onClick(View v) {
-                    ((OnLoadFolderData) mContext).onLoadPathData(path);
+        if (data.type == AdapterItem.TYPE_FOLDER) {
+            AdapterItem.FolderItem folderData = (AdapterItem.FolderItem) data;
+            holder.mTextFolderName.setText(folderData.name);
+            final String path = folderData.path;
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                    public void onClick(View v) {
+                    ((OnLoadFolderData) mContext).onLoadPathData(path); }
                 }
-            }
-        );
-        holder.mButtonShow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Context context = v.getContext();
-                Intent intent = new Intent(context, ShowPicturesActivity.class);
-                intent.putExtra(ShowPicturesActivity.EXTRA_PATH_TO_SHOW, path);
-                context.startActivity(intent);
-            }
-        });
+            );
+            holder.mButtonShow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Context context = v.getContext();
+                    Intent intent = new Intent(context, ShowPicturesActivity.class);
+                    intent.putExtra(ShowPicturesActivity.EXTRA_PATH_TO_SHOW, path);
+                    context.startActivity(intent);
+                }
+            });
+        }
+
+
 
         //File file = new File(path);
         //holder.mImagePreview.setImageResource(R.drawable.ic_launcher_foreground);
@@ -87,12 +91,39 @@ public class RecyclerviewFolderBrowserAdapter extends RecyclerView.Adapter<Recyc
     }
 
     public static class AdapterItem {
-        public String name;
-        public String path;
+        public static class ImageItem extends AdapterItem{
+            // The directory where the downloaded item is stored
+            public String localDirectory;
+            public String localFilePath;
+            public String remotePath;
+            public boolean isLocalFileDownloaded;
 
-        public AdapterItem(String name, String path) {
-            this.name = name;
-            this.path = path;
+            public ImageItem(int type, String localDirectory, String localFilePath, String remotePath, boolean isLocalFileDownloaded) {
+                super(type);
+                this.localDirectory = localDirectory;
+                this.localFilePath = localFilePath;
+                this.remotePath = remotePath;
+                this.isLocalFileDownloaded = isLocalFileDownloaded;
+            }
+        }
+
+        public static class FolderItem extends AdapterItem {
+            public String name;
+            public String path;
+
+            public FolderItem(int type, String name, String path) {
+                super(type);
+                this.name = name;
+                this.path = path;
+            }
+        }
+        public static final int TYPE_FOLDER = 0;
+        public static final int TYPE_IMAGE = 1;
+
+        public int type;
+
+        public AdapterItem(int type) {
+            this.type = type;
         }
     }
 

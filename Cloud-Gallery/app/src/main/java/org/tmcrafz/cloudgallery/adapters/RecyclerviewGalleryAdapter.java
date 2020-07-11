@@ -34,7 +34,7 @@ public class RecyclerviewGalleryAdapter extends RecyclerView.Adapter<Recyclervie
     @NonNull
     @Override
     public PlaceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_gallery_custom_layout, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_gallery_custom_layout_image_entry, parent, false);
         return new PlaceViewHolder(view);
     }
 
