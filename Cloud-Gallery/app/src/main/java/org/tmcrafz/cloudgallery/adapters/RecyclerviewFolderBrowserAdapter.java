@@ -13,11 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.tmcrafz.cloudgallery.R;
 import org.tmcrafz.cloudgallery.ui.ShowPicturesActivity;
-import org.tmcrafz.cloudgallery.ui.showpictures.ShowPicturesFragment;
 
 import java.util.ArrayList;
 
-public class RecyclerviewFolderBrowserAdapter extends RecyclerView.Adapter<RecyclerviewFolderBrowserAdapter.PlaceViewHolder> {
+public class RecyclerviewFolderBrowserAdapter extends RecyclerView.Adapter<RecyclerviewFolderBrowserAdapter.FolderTypeViewHolder> {
 
     public interface OnLoadFolderData {
         void onLoadPathData(String path);
@@ -26,64 +25,70 @@ public class RecyclerviewFolderBrowserAdapter extends RecyclerView.Adapter<Recyc
     private static String TAG = RecyclerviewFolderBrowserAdapter.class.getCanonicalName();
 
     private OnLoadFolderData mContext;
-    private ArrayList<AdapterItem> mPathData;
+    private ArrayList<AdapterItem> mData;
 
 
     public RecyclerviewFolderBrowserAdapter(OnLoadFolderData context, ArrayList<AdapterItem> pathData) {
         mContext = context;
-        mPathData = pathData;
+        mData = pathData;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return mData.get(position).type;
     }
 
     @NonNull
     @Override
-    public PlaceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_folder_browser, parent, false);
-        return new RecyclerviewFolderBrowserAdapter.PlaceViewHolder(view);
+    public FolderTypeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view;
+        switch (viewType) {
+            case AdapterItem.TYPE_FOLDER:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_folder_browser, parent, false);
+                return new FolderTypeViewHolder(view);
+        }
+        return null;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PlaceViewHolder holder, int position) {
-        AdapterItem data = mPathData.get(position);
-        if (data.type == AdapterItem.TYPE_FOLDER) {
-            AdapterItem.FolderItem folderData = (AdapterItem.FolderItem) data;
-            holder.mTextFolderName.setText(folderData.name);
-            final String path = folderData.path;
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                    public void onClick(View v) {
-                    ((OnLoadFolderData) mContext).onLoadPathData(path); }
-                }
-            );
-            holder.mButtonShow.setOnClickListener(new View.OnClickListener() {
+    public void onBindViewHolder(@NonNull FolderTypeViewHolder holder, int position) {
+        AdapterItem data = mData.get(position);
+        switch (data.type) {
+            case AdapterItem.TYPE_FOLDER:
+                AdapterItem.FolderItem folderData = (AdapterItem.FolderItem) data;
+                holder.mTextFolderName.setText(folderData.name);
+                final String path = folderData.path;
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                                                   @Override
+                                                   public void onClick(View v) {
+                                                       ((OnLoadFolderData) mContext).onLoadPathData(path); }
+                                               }
+                );
+                holder.mButtonShow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Context context = v.getContext();
                     Intent intent = new Intent(context, ShowPicturesActivity.class);
                     intent.putExtra(ShowPicturesActivity.EXTRA_PATH_TO_SHOW, path);
                     context.startActivity(intent);
-                }
-            });
+                    }
+                });
+                break;
         }
-
-
-
-        //File file = new File(path);
-        //holder.mImagePreview.setImageResource(R.drawable.ic_launcher_foreground);
     }
 
     @Override
     public int getItemCount() {
-        return mPathData.size();
+        return mData.size();
     }
 
-    public static class PlaceViewHolder extends RecyclerView.ViewHolder {
-
+    public static class FolderTypeViewHolder extends RecyclerView.ViewHolder {
         //public ImageView mImagePreview;
         public TextView mTextFolderName;
         public Button mButtonShow;
         //public boolean mIsLoaded = false;
 
-        public PlaceViewHolder(@NonNull View itemView) {
+        public FolderTypeViewHolder(@NonNull View itemView) {
             super(itemView);
             mTextFolderName = itemView.findViewById(R.id.textView_folder_name);
             mButtonShow = itemView.findViewById(R.id.button_show);
