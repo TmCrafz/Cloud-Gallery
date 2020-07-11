@@ -15,13 +15,13 @@ import org.tmcrafz.cloudgallery.R;
 import java.io.File;
 import java.util.ArrayList;
 
-public class RecyclerviewFolderBrowserAdapter extends RecyclerView.Adapter {
+public class RecyclerviewGalleryBrowserAdapter extends RecyclerView.Adapter {
 
     public interface OnLoadFolderData {
         void onLoadPathData(String path);
     }
 
-    private static String TAG = RecyclerviewFolderBrowserAdapter.class.getCanonicalName();
+    private static String TAG = RecyclerviewGalleryBrowserAdapter.class.getCanonicalName();
 
     public final static int LAYOUT_MODE_LINEAR = 0;
     public final static int LAYOUT_MODE_GRID = 1;
@@ -31,7 +31,7 @@ public class RecyclerviewFolderBrowserAdapter extends RecyclerView.Adapter {
     private int mLayoutMode;
 
 
-    public RecyclerviewFolderBrowserAdapter(OnLoadFolderData context, ArrayList<GalleryItem> pathData, int layoutMode) {
+    public RecyclerviewGalleryBrowserAdapter(OnLoadFolderData context, ArrayList<GalleryItem> pathData, int layoutMode) {
         mContext = context;
         mData = pathData;
         mLayoutMode = layoutMode;

@@ -25,7 +25,7 @@ import com.owncloud.android.lib.resources.files.model.RemoteFile;
 
 import org.tmcrafz.cloudgallery.R;
 import org.tmcrafz.cloudgallery.adapters.GalleryItem;
-import org.tmcrafz.cloudgallery.adapters.RecyclerviewFolderBrowserAdapter;
+import org.tmcrafz.cloudgallery.adapters.RecyclerviewGalleryBrowserAdapter;
 import org.tmcrafz.cloudgallery.datahandling.StorageHandler;
 import org.tmcrafz.cloudgallery.web.CloudFunctions;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudOperationDownloadThumbnail;
@@ -38,7 +38,7 @@ import java.util.ArrayList;
 public class CloudFolderFragment extends Fragment implements
         NextcloudOperationReadFolder.OnReadFolderFinishedListener,
         NextcloudOperationDownloadThumbnail.OnDownloadThumbnailFinishedListener,
-        RecyclerviewFolderBrowserAdapter.OnLoadFolderData {
+        RecyclerviewGalleryBrowserAdapter.OnLoadFolderData {
     private static String TAG = CloudFolderFragment.class.getCanonicalName();
 
     private ArrayList<GalleryItem> mItemData = new ArrayList<GalleryItem>();
@@ -50,7 +50,7 @@ public class CloudFolderFragment extends Fragment implements
     private int mLayoutMode;
     private LinearLayoutManager mLayoutManager;
     private GridLayoutManager mGridLayoutManagerGallery;
-    private RecyclerviewFolderBrowserAdapter mRecyclerViewFolderBrowserAdapter;
+    private RecyclerviewGalleryBrowserAdapter mRecyclerViewFolderBrowserAdapter;
 
     private Menu mMenu;
 
@@ -73,15 +73,15 @@ public class CloudFolderFragment extends Fragment implements
         switch (item.getItemId()) {
             case R.id.action_change_view:
                 // Switch from linear to grid layout
-                if (mLayoutMode == RecyclerviewFolderBrowserAdapter.LAYOUT_MODE_LINEAR) {
+                if (mLayoutMode == RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_LINEAR) {
                     mMenu.findItem(R.id.action_change_view).setIcon(R.drawable.ic_baseline_view_list_24);
-                    mLayoutMode = RecyclerviewFolderBrowserAdapter.LAYOUT_MODE_GRID;
+                    mLayoutMode = RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_GRID;
 
                 }
                 // Switch from grid layout to linear
-                else if (mLayoutMode == RecyclerviewFolderBrowserAdapter.LAYOUT_MODE_GRID) {
+                else if (mLayoutMode == RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_GRID) {
                     mMenu.findItem(R.id.action_change_view).setIcon(R.drawable.ic_baseline_view_module_grid_24);
-                    mLayoutMode = RecyclerviewFolderBrowserAdapter.LAYOUT_MODE_LINEAR;
+                    mLayoutMode = RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_LINEAR;
                 }
                 break;
         }
@@ -113,7 +113,7 @@ public class CloudFolderFragment extends Fragment implements
         View root = inflater.inflate(R.layout.fragment_cloud_folder, container, false);
 
         mRecyclerViewFolderBrowser = root.findViewById(R.id.recyclerView_gallery);
-        mLayoutMode = RecyclerviewFolderBrowserAdapter.LAYOUT_MODE_LINEAR;
+        mLayoutMode = RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_LINEAR;
 
         mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerViewFolderBrowser.setLayoutManager(mLayoutManager);
@@ -124,8 +124,8 @@ public class CloudFolderFragment extends Fragment implements
          */
 
 
-        mRecyclerViewFolderBrowserAdapter = new RecyclerviewFolderBrowserAdapter(
-                (RecyclerviewFolderBrowserAdapter.OnLoadFolderData) this, mItemData, mLayoutMode);
+        mRecyclerViewFolderBrowserAdapter = new RecyclerviewGalleryBrowserAdapter(
+                (RecyclerviewGalleryBrowserAdapter.OnLoadFolderData) this, mItemData, mLayoutMode);
         mRecyclerViewFolderBrowser.setAdapter(mRecyclerViewFolderBrowserAdapter);
         // Turn off animation when item change
         //((SimpleItemAnimator) mRecyclerViewGallery.getItemAnimator()).setSupportsChangeAnimations(false);
