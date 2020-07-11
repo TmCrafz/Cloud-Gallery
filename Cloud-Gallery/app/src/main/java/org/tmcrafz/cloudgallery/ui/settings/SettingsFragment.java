@@ -17,11 +17,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import org.tmcrafz.cloudgallery.R;
-import org.tmcrafz.cloudgallery.ui.showpictures.ShowPicturesFragment;
 
 public class SettingsFragment extends Fragment {
 
-    private static String TAG = ShowPicturesFragment.class.getCanonicalName();
+    private static String TAG = SettingsFragment.class.getCanonicalName();
 
     private SettingsViewModel mViewModel;
     private EditText mEditTextServer;

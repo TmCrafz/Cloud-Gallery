@@ -20,7 +20,6 @@ import com.owncloud.android.lib.resources.files.model.RemoteFile;
 
 import org.tmcrafz.cloudgallery.R;
 import org.tmcrafz.cloudgallery.datahandling.DataHandlerSql;
-import org.tmcrafz.cloudgallery.ui.ShowPicturesActivity;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudOperationReadFolder;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudWrapper;
 
@@ -52,6 +51,7 @@ public class HomeFragment extends Fragment implements
 
 
         Button buttonShow = root.findViewById(R.id.button_show);
+        /*
         buttonShow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,7 +64,7 @@ public class HomeFragment extends Fragment implements
                 startActivity(intent);
             }
         });
-
+*/
 //        mDataHandlerSql = new DataHandlerSql(getActivity());
 //        mDataHandlerSql.deleteDatabase(getActivity());
         mDataHandlerSql = new DataHandlerSql(getActivity());

@@ -1,12 +1,9 @@
 package org.tmcrafz.cloudgallery.adapters;
 
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,12 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.tmcrafz.cloudgallery.R;
-import org.tmcrafz.cloudgallery.ui.ShowPicturesActivity;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 
 public class RecyclerviewFolderBrowserAdapter extends RecyclerView.Adapter {
 
