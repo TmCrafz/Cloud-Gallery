@@ -2,6 +2,7 @@ package org.tmcrafz.cloudgallery.ui.cloud_folders;
 
 import androidx.lifecycle.ViewModelProviders;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -18,6 +19,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -49,6 +52,7 @@ public class CloudFolderFragment extends Fragment implements
     private String mCurrentPath = ABSOLUTE_ROOT_PATH;
 
     private CloudFolderViewModel mViewModel;
+    private ScaleGestureDetector mScaleGestureDetector;
     private RecyclerView mRecyclerViewFolderBrowser;
     private LinearLayoutManager mLinearLayoutManager;
     private GridLayoutManager mGridLayoutManager;
@@ -112,6 +116,7 @@ public class CloudFolderFragment extends Fragment implements
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -133,6 +138,24 @@ public class CloudFolderFragment extends Fragment implements
         mAdapter = new RecyclerviewGalleryBrowserAdapter(
                 (RecyclerviewGalleryBrowserAdapter.OnLoadFolderData) this, mItemData, layoutMode);
         mRecyclerViewFolderBrowser.setAdapter(mAdapter);
+
+        
+        mScaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener(){
+            @Override
+            public boolean onScale(ScaleGestureDetector detector) {
+                Log.d(TAG, "Scale Gesture detected");
+                return false;
+            }
+        });
+        mRecyclerViewFolderBrowser.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                mScaleGestureDetector.onTouchEvent(event);
+                return false;
+            }
+        });
+
+
         // Turn off animation when item change
         //((SimpleItemAnimator) mRecyclerViewGallery.getItemAnimator()).setSupportsChangeAnimations(false);
         onLoadPathData(mCurrentPath);
