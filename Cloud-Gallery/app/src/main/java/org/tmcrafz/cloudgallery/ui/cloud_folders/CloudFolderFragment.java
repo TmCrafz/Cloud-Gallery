@@ -21,20 +21,22 @@ import com.owncloud.android.lib.resources.files.model.RemoteFile;
 
 import org.tmcrafz.cloudgallery.R;
 import org.tmcrafz.cloudgallery.adapters.RecyclerviewFolderBrowserAdapter;
+import org.tmcrafz.cloudgallery.datahandling.StorageHandler;
+import org.tmcrafz.cloudgallery.web.CloudFunctions;
+import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudOperationDownloadThumbnail;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudOperationReadFolder;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudWrapper;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class CloudFolderFragment extends Fragment implements
         NextcloudOperationReadFolder.OnReadFolderFinishedListener,
+        NextcloudOperationDownloadThumbnail.OnDownloadThumbnailFinishedListener,
         RecyclerviewFolderBrowserAdapter.OnLoadFolderData {
     private static String TAG = CloudFolderFragment.class.getCanonicalName();
 
-    private ArrayList<RecyclerviewFolderBrowserAdapter.AdapterItem> mPathData = new ArrayList<RecyclerviewFolderBrowserAdapter.AdapterItem>();
+    private ArrayList<RecyclerviewFolderBrowserAdapter.AdapterItem> mItemData = new ArrayList<RecyclerviewFolderBrowserAdapter.AdapterItem>();
     private final String ABSOLUTE_ROOT_PATH = "/";
     private String mCurrentPath = ABSOLUTE_ROOT_PATH;
 
@@ -75,7 +77,7 @@ public class CloudFolderFragment extends Fragment implements
         mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerViewFolderBrowser.setLayoutManager(mLayoutManager);
 
-        mRecyclerViewFolderBrowserAdapter = new RecyclerviewFolderBrowserAdapter((RecyclerviewFolderBrowserAdapter.OnLoadFolderData) this, mPathData);
+        mRecyclerViewFolderBrowserAdapter = new RecyclerviewFolderBrowserAdapter((RecyclerviewFolderBrowserAdapter.OnLoadFolderData) this, mItemData);
         mRecyclerViewFolderBrowser.setAdapter(mRecyclerViewFolderBrowserAdapter);
         // Turn off animation when item change
         //((SimpleItemAnimator) mRecyclerViewGallery.getItemAnimator()).setSupportsChangeAnimations(false);
@@ -94,24 +96,28 @@ public class CloudFolderFragment extends Fragment implements
     public void onReadFolderFinished(String identifier, boolean isSuccesfull, ArrayList<Object> files) {
         if (isSuccesfull) {
             // We replace the new pathes with the old ones
-            mPathData.clear();
+            mItemData.clear();
+            // ToDo: thumbnail size in settings and elsewhere (not hardcoded here)
+            int thumbnailSizePixel = 1280;
+            String localDirectoryPath = StorageHandler.getThumbnailDir(getContext());
+
             //mPathData.add(new RecyclerviewFolderBrowserAdapter.AdapterItem("Back", ""));
             // ToDo: Temporary add entry to come back. Add functionality with androids "back button" instead
             if (!mCurrentPath.equals(ABSOLUTE_ROOT_PATH)) {
                 String parent = (new File(mCurrentPath)).getParent();
-                mPathData.add(
+                mItemData.add(
                         new RecyclerviewFolderBrowserAdapter.AdapterItem.FolderItem(
                                 RecyclerviewFolderBrowserAdapter.AdapterItem.TYPE_FOLDER, getString(R.string.text_folder_browser_back), parent));
             }
             for(Object fileTmp: files) {
                 RemoteFile file = (RemoteFile)  fileTmp;
                 String mimetype = file.getMimeType();
+                String remotePath = file.getRemotePath();
                 //Log.d(TAG, remotePath + ": " + mimetype);
                 if (mimetype.equals("DIR")) {
-                    String remotePath = file.getRemotePath();
                     String name = remotePath;
                     //Log.d(TAG, "remotePath Path: " + remotePath);
-                    mPathData.add(
+                    mItemData.add(
                             new RecyclerviewFolderBrowserAdapter.AdapterItem.FolderItem(
                                     RecyclerviewFolderBrowserAdapter.AdapterItem.TYPE_FOLDER, name, remotePath));
                     // ToDo: Ausnahme für aktuellen Ordner (bpen Eintrag, außerhalb von Adapter?)
@@ -119,12 +125,54 @@ public class CloudFolderFragment extends Fragment implements
                     //    mNextCloudWrapper.startReadFolder(remotePath, remotePath, new Handler(), this);
                     //}
                 }
+                else if (CloudFunctions.isFileSupportedPicture(remotePath)) {
+                    // Download Picture
+                    // Create local file path (location on disk + absolute path
+                    // For example:
+                    // remote path: /Test1/test.png, location on disk: /storage/external/CloudGallery
+                    // Local file path: /storage/external/CloudGallery/Test1/test.png
+                    // The final path
+                    String localFilePath = localDirectoryPath + remotePath;
+                    Log.d(TAG, "->localFilePath before Add: " + localFilePath);
+                    mItemData.add(
+                            new RecyclerviewFolderBrowserAdapter.AdapterItem.ImageItem(
+                                RecyclerviewFolderBrowserAdapter.AdapterItem.TYPE_IMAGE, localDirectoryPath, localFilePath, remotePath, false));
+                }
             }
             // Show loaded path in recyclerview adapter
             mRecyclerViewFolderBrowserAdapter.notifyDataSetChanged();
         }
         else {
             Log.e(TAG, "Could not read remote folder with identifier: " + identifier);
+        }
+        mNextCloudWrapper.cleanOperations();
+    }
+
+    @Override
+    public void onDownloadThumbnailFinished(String identifier, boolean isSuccessful) {
+        if (isSuccessful) {
+            String localFilePath = identifier;
+            File file = new File(localFilePath);
+            if (file.exists() && file.isFile()) {
+                // We note that the file is available now
+                RecyclerviewFolderBrowserAdapter.AdapterItem.ImageItem.updateDownloadStatusByLocalFilePath(mItemData, localFilePath, true);
+                //mGalleryAdapter.notifyDataSetChanged();
+                int updatePosition = RecyclerviewFolderBrowserAdapter.AdapterItem.ImageItem.getPositionByLocalFilePath(mItemData, localFilePath);
+                mRecyclerViewFolderBrowserAdapter.notifyItemChanged(updatePosition, null);
+                //mGalleryAdapter.notifyDataSetChanged();
+            }
+            else {
+                Log.e(TAG, "Showing downloaded file with identifier '" + identifier +"' failed. File is not existing or directory");
+                if (!file.exists()) {
+                    Log.e(TAG, "-->File is not existing");
+                }
+                if (!file.isFile()) {
+                    Log.e(TAG, "-->Not a file");
+                }
+            }
+        }
+        else {
+            Log.e(TAG, "Download Thumbnail with identifier failed: " + identifier);
         }
         mNextCloudWrapper.cleanOperations();
     }
@@ -139,4 +187,6 @@ public class CloudFolderFragment extends Fragment implements
         mCurrentPath = path;
         mNextCloudWrapper.startReadFolder(path, path, new Handler(), this);
     }
+
+
 }

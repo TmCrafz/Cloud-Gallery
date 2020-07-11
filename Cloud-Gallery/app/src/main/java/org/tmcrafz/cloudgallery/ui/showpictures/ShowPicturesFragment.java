@@ -32,7 +32,7 @@ import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudWrapper;
 import java.io.File;
 import java.util.ArrayList;
 
-
+// ToDo: Delete Class and its adapter
 public class ShowPicturesFragment extends Fragment implements
         NextcloudOperationReadFolder.OnReadFolderFinishedListener,
         NextcloudOperationDownloadFile.OnDownloadFileFinishedListener,

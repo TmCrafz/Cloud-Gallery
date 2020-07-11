@@ -29,6 +29,7 @@
     <string name="key_preference_username">username</string>
     <string name="key_preference_password">password</string>
 
+    <string name="text_placeholder_image_name">Image</string>
     <string name="text_button_show_gallery">Show</string>
     <string name="text_folder_browser_back">Back</string>
 
