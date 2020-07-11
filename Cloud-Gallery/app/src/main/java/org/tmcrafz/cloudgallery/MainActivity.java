@@ -19,11 +19,14 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import org.tmcrafz.cloudgallery.ui.com_interfaces.OnChangeActionBarTitle;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudWrapper;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements
+        OnChangeActionBarTitle {
+
     public interface OnBackPressedListener {
         void onBackPressed();
     }
@@ -73,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     public void onBackPressed() {
         List<Fragment> fragments = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment).getChildFragmentManager().getFragments();
@@ -84,5 +86,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         super.onBackPressed();
+    }
+
+    @Override
+    public void OnChangActionbarTitle(String title) {
+        getSupportActionBar().setTitle(title);
     }
 }

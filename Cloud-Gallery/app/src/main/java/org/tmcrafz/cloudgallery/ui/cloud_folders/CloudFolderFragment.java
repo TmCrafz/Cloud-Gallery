@@ -28,6 +28,7 @@ import org.tmcrafz.cloudgallery.R;
 import org.tmcrafz.cloudgallery.adapters.GalleryItem;
 import org.tmcrafz.cloudgallery.adapters.RecyclerviewGalleryBrowserAdapter;
 import org.tmcrafz.cloudgallery.datahandling.StorageHandler;
+import org.tmcrafz.cloudgallery.ui.com_interfaces.OnChangeActionBarTitle;
 import org.tmcrafz.cloudgallery.web.CloudFunctions;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudOperationDownloadThumbnail;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudOperationReadFolder;
@@ -148,6 +149,18 @@ public class CloudFolderFragment extends Fragment implements
     @Override
     public void onReadFolderFinished(String identifier, boolean isSuccesfull, ArrayList<Object> files) {
         if (isSuccesfull) {
+            // Update Action bar title to folder name
+            if (getActivity() instanceof OnChangeActionBarTitle) {
+                // Set name to / when in root folder, else use real name
+                String name = "/";
+                if (!mCurrentPath.equals("/")) {
+                    File file = new File(mCurrentPath);
+                    name = file.getName();
+                }
+                ((OnChangeActionBarTitle) getActivity()).OnChangActionbarTitle(name);
+            }
+
+
             // We replace the new pathes with the old ones
             mItemData.clear();
             // ToDo: thumbnail size in settings and elsewhere (not hardcoded here)
@@ -236,6 +249,8 @@ public class CloudFolderFragment extends Fragment implements
         }
         // The new current path will be the one we load
         mCurrentPath = path;
+        //getActivity().getActionBar().setTitle("Test");
+        //getActivity().setTitle("TEST");
         mNextCloudWrapper.startReadFolder(path, path, new Handler(), this);
     }
 
