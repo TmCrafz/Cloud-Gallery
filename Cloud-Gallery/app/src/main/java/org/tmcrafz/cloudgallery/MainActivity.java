@@ -12,6 +12,7 @@ import com.google.android.material.navigation.NavigationView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -71,12 +72,16 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
+
+
     @Override
     public void onBackPressed() {
-        List<Fragment> fragments = getSupportFragmentManager().getFragments();
-        for(Fragment fragment : fragments){
-            if(fragment != null && fragment instanceof OnBackPressedListener)
+        List<Fragment> fragments = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment).getChildFragmentManager().getFragments();
+        for(Fragment fragment: fragments) {
+            if (fragment != null && fragment instanceof OnBackPressedListener) {
                 ((OnBackPressedListener)fragment).onBackPressed();
+                return;
+            }
         }
         super.onBackPressed();
     }

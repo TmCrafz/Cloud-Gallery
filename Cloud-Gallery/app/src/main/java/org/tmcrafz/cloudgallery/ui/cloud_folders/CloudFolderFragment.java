@@ -245,6 +245,13 @@ public class CloudFolderFragment extends Fragment implements
 
     @Override
     public void onBackPressed() {
-        Log.d(TAG, "onBackPressed Fragment");
+        // Load parent folder
+        // Dont load anything when we are in root path
+        if (mCurrentPath != null && !mCurrentPath.equals(ABSOLUTE_ROOT_PATH)) {
+            File file = new File(mCurrentPath);
+            String parentPath = file.getParent();
+            Log.d(TAG, "onBackPressedO Curpath:" + mCurrentPath + " Parent path: " + parentPath);
+            onLoadPathData(parentPath);
+        }
     }
 }
