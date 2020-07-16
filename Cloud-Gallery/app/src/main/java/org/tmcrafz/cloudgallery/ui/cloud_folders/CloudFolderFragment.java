@@ -56,6 +56,7 @@ public class CloudFolderFragment extends Fragment implements
     private RecyclerView mRecyclerViewFolderBrowser;
     private LinearLayoutManager mLinearLayoutManager;
     private GridLayoutManager mGridLayoutManager;
+    private int mGridLayoutSpanCount = 2;
     private RecyclerviewGalleryBrowserAdapter mAdapter;
 
     private Menu mMenu;
@@ -71,6 +72,7 @@ public class CloudFolderFragment extends Fragment implements
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.gallery_view_menu, menu);
         mMenu = menu;
+        changeLayoutMenuIcon();
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -80,18 +82,17 @@ public class CloudFolderFragment extends Fragment implements
             case R.id.action_change_view:
                 // Switch from linear to grid layout
                 if (mAdapter.getLayoutMode() == RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_LINEAR) {
-                    mMenu.findItem(R.id.action_change_view).setIcon(R.drawable.ic_baseline_view_list_24);
                     mAdapter.setLayoutMode(RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_GRID);
                     mRecyclerViewFolderBrowser.setLayoutManager(mGridLayoutManager);
                     mRecyclerViewFolderBrowser.setAdapter(mAdapter);
                 }
                 // Switch from grid layout to linear
                 else if (mAdapter.getLayoutMode() == RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_GRID) {
-                    mMenu.findItem(R.id.action_change_view).setIcon(R.drawable.ic_baseline_view_module_grid_24);
                     mAdapter.setLayoutMode(RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_LINEAR);
                     mRecyclerViewFolderBrowser.setLayoutManager(mLinearLayoutManager);
                     mRecyclerViewFolderBrowser.setAdapter(mAdapter);
                 }
+                changeLayoutMenuIcon();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -123,7 +124,8 @@ public class CloudFolderFragment extends Fragment implements
         View root = inflater.inflate(R.layout.fragment_cloud_folder, container, false);
 
         mRecyclerViewFolderBrowser = root.findViewById(R.id.recyclerView_gallery);
-        int layoutMode = RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_LINEAR;
+        //int layoutMode = RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_LINEAR;
+        int layoutMode = RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_GRID;
 
         mLinearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
@@ -144,6 +146,29 @@ public class CloudFolderFragment extends Fragment implements
             @Override
             public boolean onScale(ScaleGestureDetector detector) {
                 Log.d(TAG, "Scale Gesture detected");
+                //int spanCount = mGridLayoutManager.getSpanCount();
+                //mGridLayoutManager.setSpanCount(spanCount + 1);
+                if (detector.getCurrentSpan() > 300 && detector.getTimeDelta() > 200) {
+                    int spanCount = mGridLayoutManager.getSpanCount();
+                    // Zoom in
+                    if ((detector.getCurrentSpan() - detector.getPreviousSpan()) < -1) {
+                        if (spanCount < 4) {
+                            mGridLayoutManager.setSpanCount(spanCount + 1);
+                            // Animation
+                            //mAdapter.notifyItemRangeChanged(0, mItemData.size());
+                            return true;
+                        }
+                    }
+                    // Zoom out
+                    else if((detector.getCurrentSpan() - detector.getPreviousSpan()) > 1) {
+                        if (spanCount > 2) {
+                            mGridLayoutManager.setSpanCount(spanCount - 1);
+                            // Animation
+                            //mAdapter.notifyItemRangeChanged(0, mItemData.size());
+                            return true;
+                        }
+                    }
+                }
                 return false;
             }
         });
@@ -264,6 +289,19 @@ public class CloudFolderFragment extends Fragment implements
         mNextCloudWrapper.cleanOperations();
     }
 
+    private void changeLayoutMenuIcon() {
+        if (mMenu == null || mAdapter == null) {
+            Log.w(TAG, "changeLayoutMenuIcon mMenu or mAdapter is null. Can't change menu icon.");
+            return;
+        }
+        if (mAdapter.getLayoutMode() == RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_LINEAR) {
+            mMenu.findItem(R.id.action_change_view).setIcon(R.drawable.ic_baseline_view_module_grid_24);
+        }
+        else if (mAdapter.getLayoutMode() == RecyclerviewGalleryBrowserAdapter.LAYOUT_MODE_GRID) {
+            mMenu.findItem(R.id.action_change_view).setIcon(R.drawable.ic_baseline_view_list_24);
+        }
+    }
+
     @Override
     public void onLoadPathData(String path) {
         if (mNextCloudWrapper == null) {
@@ -289,4 +327,6 @@ public class CloudFolderFragment extends Fragment implements
             onLoadPathData(parentPath);
         }
     }
+
+
 }
