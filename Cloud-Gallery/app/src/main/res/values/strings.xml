@@ -35,5 +35,9 @@
     <string name="text_placeholder_image_name">Image</string>
     <string name="text_button_show_gallery">Show</string>
     <string name="text_folder_browser_back">Back</string>
+    <string name="title_activity_show_photo">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_test_debug_fullscreen">FullscreenActivity</string>
 
 </resources>

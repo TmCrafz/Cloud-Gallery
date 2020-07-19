@@ -1,5 +1,7 @@
 package org.tmcrafz.cloudgallery.adapters;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.tmcrafz.cloudgallery.R;
+import org.tmcrafz.cloudgallery.ui.show_photo.ShowPhotoActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -88,15 +91,6 @@ public class RecyclerviewGalleryBrowserAdapter extends RecyclerView.Adapter {
                                                }
                 );
                 ((FolderTypeViewHolder) holder).mFolderImagePreview.setImageResource(R.drawable.ic_baseline_folder_24);
-//                ((FolderTypeViewHolder) holder).mButtonShow.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Context context = v.getContext();
-//                    Intent intent = new Intent(context, ShowPicturesActivity.class);
-//                    intent.putExtra(ShowPicturesActivity.EXTRA_PATH_TO_SHOW, folderPath);
-//                    context.startActivity(intent);
-//                    }
-//                });
                 break;
             case GalleryItem.TYPE_IMAGE:
                 GalleryItem.ImageItem imageData = (GalleryItem.ImageItem) data;
@@ -120,6 +114,17 @@ public class RecyclerviewGalleryBrowserAdapter extends RecyclerView.Adapter {
 //                    .load(R.drawable.ic_launcher_foreground) // Uri of the picture
 //                    .into(holder.mImagePreview);
                 }
+                final String remotePathImage = imageData.remotePath;
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Context context = v.getContext();
+                        Intent intent = new Intent(context, ShowPhotoActivity.class);
+                        intent.putExtra(ShowPhotoActivity.EXTRA_REMOTE_PATH_TO_IMAGE, remotePathImage);
+                        context.startActivity(intent);
+                    }
+                });
+
                 break;
         }
     }
