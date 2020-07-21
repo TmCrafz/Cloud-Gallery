@@ -126,6 +126,7 @@ public class ShowPhotoActivity extends AppCompatActivity {
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle("");
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
 
 
         mVisible = true;
