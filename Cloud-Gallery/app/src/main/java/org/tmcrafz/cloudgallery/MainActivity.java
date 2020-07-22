@@ -47,7 +47,8 @@ public class MainActivity extends AppCompatActivity implements
         mNextcloudUrl = prefs.getString(getString(R.string.key_preference_server_url), "");
         mNextcloudUsername = prefs.getString(getString(R.string.key_preference_username), "");
         mNextcloudPassword = prefs.getString(getString(R.string.key_preference_password), "");
-        NextcloudWrapper.initializeWrapperWhenNecessary(mNextcloudUrl, mNextcloudUsername, mNextcloudPassword, getApplicationContext());
+        NextcloudWrapper.initializeWrapperWhenNecessary(
+                mNextcloudUrl, mNextcloudUsername, mNextcloudPassword, getApplicationContext());
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -76,7 +77,8 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        NextcloudWrapper.initializeWrapperWhenNecessary(mNextcloudUrl, mNextcloudUsername, mNextcloudPassword, getApplicationContext());
+        NextcloudWrapper.initializeWrapperWhenNecessary(
+                mNextcloudUrl, mNextcloudUsername, mNextcloudPassword, getApplicationContext());
         Log.d(TAG, "onResume");
     }
 

@@ -131,7 +131,8 @@ public class ShowPhotoActivity extends AppCompatActivity implements NextcloudOpe
         mNextcloudUrl = prefs.getString(getString(R.string.key_preference_server_url), "");
         mNextcloudUsername = prefs.getString(getString(R.string.key_preference_username), "");
         mNextcloudPassword = prefs.getString(getString(R.string.key_preference_password), "");
-        NextcloudWrapper.initializeWrapperWhenNecessary(mNextcloudUrl, mNextcloudUsername, mNextcloudPassword, getApplicationContext());
+        NextcloudWrapper.initializeWrapperWhenNecessary(
+                mNextcloudUrl, mNextcloudUsername, mNextcloudPassword, getApplicationContext());
 
         setContentView(R.layout.activity_show_photo);
         //supportRequestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
@@ -176,7 +177,8 @@ public class ShowPhotoActivity extends AppCompatActivity implements NextcloudOpe
     @Override
     protected void onResume() {
         super.onResume();
-        NextcloudWrapper.initializeWrapperWhenNecessary(mNextcloudUrl, mNextcloudUsername, mNextcloudPassword, getApplicationContext());
+        NextcloudWrapper.initializeWrapperWhenNecessary(
+                mNextcloudUrl, mNextcloudUsername, mNextcloudPassword, getApplicationContext());
     }
 
     @Override
