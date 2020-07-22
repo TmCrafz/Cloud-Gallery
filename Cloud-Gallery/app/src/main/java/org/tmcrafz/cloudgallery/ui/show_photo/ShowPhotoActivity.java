@@ -6,6 +6,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -21,12 +22,14 @@ import android.widget.ImageView;
 
 import org.tmcrafz.cloudgallery.R;
 import org.tmcrafz.cloudgallery.datahandling.StorageHandler;
+import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudOperationDownloadFile;
+import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudWrapper;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class ShowPhotoActivity extends AppCompatActivity {
+public class ShowPhotoActivity extends AppCompatActivity implements NextcloudOperationDownloadFile.OnDownloadFileFinishedListener {
     private static String TAG = ShowPhotoActivity.class.getCanonicalName();
 
     public final static String EXTRA_REMOTE_PATH_TO_IMAGE = "remote_path_to_image";
@@ -92,6 +95,10 @@ public class ShowPhotoActivity extends AppCompatActivity {
      * while interacting with activity UI.
      */
 
+    private String mNextcloudUrl;
+    private String mNextcloudUsername;
+    private String mNextcloudPassword;
+
     private ImageView mImageView;
     private String mRemotePath;
     // ToDo: Remote Folder, to swipe to next picture (pre loading next and before last picture?
@@ -119,6 +126,12 @@ public class ShowPhotoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences prefs = getSharedPreferences(getString(R.string.key_preference_file_key), 0);
+        mNextcloudUrl = prefs.getString(getString(R.string.key_preference_server_url), "");
+        mNextcloudUsername = prefs.getString(getString(R.string.key_preference_username), "");
+        mNextcloudPassword = prefs.getString(getString(R.string.key_preference_password), "");
+        NextcloudWrapper.initializeWrapperWhenNecessary(mNextcloudUrl, mNextcloudUsername, mNextcloudPassword, getApplicationContext());
 
         setContentView(R.layout.activity_show_photo);
         //supportRequestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
@@ -158,6 +171,12 @@ public class ShowPhotoActivity extends AppCompatActivity {
             Log.d(TAG, "PreviewPath: " + previewTmpPath);
             mImageView.setImageBitmap(BitmapFactory.decodeFile(previewTmpPath));
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        NextcloudWrapper.initializeWrapperWhenNecessary(mNextcloudUrl, mNextcloudUsername, mNextcloudPassword, getApplicationContext());
     }
 
     @Override
@@ -229,5 +248,10 @@ public class ShowPhotoActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         finish();
+    }
+
+    @Override
+    public void onDownloadFileFinished(String identifier, boolean isSuccessful) {
+
     }
 }

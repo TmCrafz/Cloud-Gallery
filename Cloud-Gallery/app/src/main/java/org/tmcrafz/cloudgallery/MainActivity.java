@@ -1,5 +1,6 @@
 package org.tmcrafz.cloudgallery;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -34,9 +35,20 @@ public class MainActivity extends AppCompatActivity implements
     private static String TAG = MainActivity.class.getCanonicalName();
     private AppBarConfiguration mAppBarConfiguration;
 
+    private String mNextcloudUrl;
+    private String mNextcloudUsername;
+    private String mNextcloudPassword;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences prefs = getSharedPreferences(getString(R.string.key_preference_file_key), 0);
+        mNextcloudUrl = prefs.getString(getString(R.string.key_preference_server_url), "");
+        mNextcloudUsername = prefs.getString(getString(R.string.key_preference_username), "");
+        mNextcloudPassword = prefs.getString(getString(R.string.key_preference_password), "");
+        NextcloudWrapper.initializeWrapperWhenNecessary(mNextcloudUrl, mNextcloudUsername, mNextcloudPassword, getApplicationContext());
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -59,6 +71,13 @@ public class MainActivity extends AppCompatActivity implements
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        NextcloudWrapper.initializeWrapperWhenNecessary(mNextcloudUrl, mNextcloudUsername, mNextcloudPassword, getApplicationContext());
+        Log.d(TAG, "onResume");
     }
 
     @Override

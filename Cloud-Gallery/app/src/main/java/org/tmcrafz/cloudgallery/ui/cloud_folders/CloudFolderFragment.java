@@ -61,7 +61,7 @@ public class CloudFolderFragment extends Fragment implements
 
     private Menu mMenu;
 
-    private NextcloudWrapper mNextCloudWrapper;
+    //private NextcloudWrapper mNextCloudWrapper;
 
 
     public static CloudFolderFragment newInstance() {
@@ -103,18 +103,6 @@ public class CloudFolderFragment extends Fragment implements
         super.onCreate(savedInstanceState);
         // Use own custom Menu for fragment
         setHasOptionsMenu(true);
-
-        SharedPreferences prefs = getActivity().getSharedPreferences(getString(R.string.key_preference_file_key), 0);
-        String serverUrl = prefs.getString(getString(R.string.key_preference_server_url), "");
-        String username = prefs.getString(getString(R.string.key_preference_username), "");
-        String password = prefs.getString(getString(R.string.key_preference_password), "");
-        if (serverUrl != "" && username != "" && password != "") {
-            mNextCloudWrapper = new NextcloudWrapper(serverUrl);
-            mNextCloudWrapper.connect(username, password, getActivity());
-        }
-        else {
-            Log.d(TAG, "mNextCloudWrapper Cannot connect to Nextcloud. Server, username or password is not set");
-        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -257,7 +245,7 @@ public class CloudFolderFragment extends Fragment implements
         else {
             Log.e(TAG, "Could not read remote folder with identifier: " + identifier);
         }
-        mNextCloudWrapper.cleanOperations();
+        NextcloudWrapper.wrapper.cleanOperations();
     }
 
     @Override
@@ -286,7 +274,7 @@ public class CloudFolderFragment extends Fragment implements
         else {
             Log.e(TAG, "Download Thumbnail with identifier failed: " + identifier);
         }
-        mNextCloudWrapper.cleanOperations();
+        NextcloudWrapper.wrapper.cleanOperations();
     }
 
     private void changeLayoutMenuIcon() {
@@ -304,7 +292,7 @@ public class CloudFolderFragment extends Fragment implements
 
     @Override
     public void onLoadPathData(String path) {
-        if (mNextCloudWrapper == null) {
+        if (NextcloudWrapper.wrapper == null) {
             Log.e(TAG, "Can't load cloud path. Nextcloud Wrapper is null");
             return;
         }
@@ -312,7 +300,7 @@ public class CloudFolderFragment extends Fragment implements
         mCurrentPath = path;
         //getActivity().getActionBar().setTitle("Test");
         //getActivity().setTitle("TEST");
-        mNextCloudWrapper.startReadFolder(path, path, new Handler(), this);
+        NextcloudWrapper.wrapper.startReadFolder(path, path, new Handler(), this);
     }
 
 
