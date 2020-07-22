@@ -1,6 +1,7 @@
 package org.tmcrafz.cloudgallery.web.nextcloud;
 
 import android.os.Handler;
+import android.util.Log;
 
 import com.owncloud.android.lib.common.OwnCloudClient;
 import com.owncloud.android.lib.common.network.OnDatatransferProgressListener;
@@ -28,6 +29,7 @@ public class NextcloudOperationDownloadFile extends NextcloudOperation implement
     // File is saved in targetDirectory + filePath (location on Server)
     public void downloadFile(String remoteFilePath, String targetDirectory, OwnCloudClient client) {
         File targetDirFile = new File(targetDirectory);
+        Log.d(TAG, "TargetFileDir: " + targetDirFile);
         DownloadFileRemoteOperation downloadOperation = new DownloadFileRemoteOperation(remoteFilePath, targetDirFile.getAbsolutePath());
         downloadOperation.addDatatransferProgressListener(this);
         downloadOperation.execute(client, this, mHandler);

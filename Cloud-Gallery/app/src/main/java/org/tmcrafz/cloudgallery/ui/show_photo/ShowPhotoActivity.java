@@ -174,8 +174,16 @@ public class ShowPhotoActivity extends AppCompatActivity implements
             // ToDo: Use real pricture Data (online this one when nothing else is available until better resolution is loaded)
             String previewTmpPath = StorageHandler.getThumbnailDir(this) + mRemotePath;
             Log.d(TAG, "PreviewPath: " + previewTmpPath);
+            // ToDo: Thumbnail resoultion seem to differ from full picture, find way to make loading more smooth
             mImageView.setImageBitmap(BitmapFactory.decodeFile(previewTmpPath));
+            // Load full picture to show
+            String localFileDir = StorageHandler.getMediaDir(getApplicationContext());
+            String identifier = localFileDir + mRemotePath;
+            NextcloudWrapper.wrapper.startDownload(
+                    mRemotePath, localFileDir, identifier, new Handler(), this);
+            // ToDo: load smaller pictures first when big (and dont load full size picture when in Datamode and too big?)
         }
+
     }
 
     @Override
@@ -258,30 +266,15 @@ public class ShowPhotoActivity extends AppCompatActivity implements
 
     @Override
     public void onDownloadFileFinished(String identifier, boolean isSuccessful) {
-//        if (isSuccessful) {
-//            String localFilePath = identifier;
-//            File file = new File(localFilePath);
-//            if (file.exists() && file.isFile()) {
-//                // We note that the file is available now
-//                GalleryItem.ImageItem.updateDownloadStatusByLocalFilePath(mItemData, localFilePath, true);
-//                //mGalleryAdapter.notifyDataSetChanged();
-//                int updatePosition = GalleryItem.ImageItem.getPositionByLocalFilePath(mItemData, localFilePath);
-//                mAdapter.notifyItemChanged(updatePosition, null);
-//                //mGalleryAdapter.notifyDataSetChanged();
-//            }
-//            else {
-//                Log.e(TAG, "Showing downloaded file with identifier '" + identifier +"' failed. File is not existing or directory");
-//                if (!file.exists()) {
-//                    Log.e(TAG, "-->File is not existing");
-//                }
-//                if (!file.isFile()) {
-//                    Log.e(TAG, "-->Not a file");
-//                }
-//            }
-//        }
-//        else {
-//            Log.e(TAG, "Download Thumbnail with identifier failed: " + identifier);
-//        }
-//        NextcloudWrapper.wrapper.cleanOperations();
+        if (isSuccessful) {
+            Log.d(TAG, "Identifier: " + identifier);
+            String localFilePath = identifier;
+            Log.d(TAG, "onDownloadFileFinished successful, local path: " + localFilePath);
+            File file = new File(localFilePath);
+            if (file.exists() && file.isFile()) {
+                // ToDo: handle picture orientation
+                mImageView.setImageBitmap(BitmapFactory.decodeFile(localFilePath));
+            }
+        }
     }
 }
