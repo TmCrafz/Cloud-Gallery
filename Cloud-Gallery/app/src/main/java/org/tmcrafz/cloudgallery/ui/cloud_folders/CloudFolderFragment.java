@@ -3,6 +3,7 @@ package org.tmcrafz.cloudgallery.ui.cloud_folders;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -236,6 +237,11 @@ public class CloudFolderFragment extends Fragment implements
                     mItemData.add(
                             new GalleryItem.ImageItem(
                                 GalleryItem.TYPE_IMAGE, localDirectoryPath, localFilePath, remotePath, false));
+                    // Start downloading Thumbnail
+                    String identifierThumbnail = localFilePath;
+                    Log.d(TAG, "Local file path: " + localFilePath);
+                    NextcloudWrapper.wrapper.startThumbnailDownload(
+                            getActivity(), remotePath, localFilePath, thumbnailSizePixel, identifierThumbnail, this);
                 }
             }
             GalleryItem.sortByName(mItemData);

@@ -77,7 +77,8 @@ public class NextcloudOperationDownloadThumbnail extends NextcloudOperation {
                     try {
                         int status = client.executeMethod(gMethod);
                         if (status == HttpStatus.SC_OK) {
-                            File file = new File(localFilePath + remoteFilePath);
+                            //File file = new File(localFilePath + remoteFilePath);
+                            File file = new File(localFilePath);
                             InputStream inputStream = gMethod.getResponseBodyAsStream();
                             FileUtils.copyInputStreamToFile(inputStream, file);
                             isSuccessful = true;

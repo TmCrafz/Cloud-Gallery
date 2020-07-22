@@ -21,15 +21,19 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import org.tmcrafz.cloudgallery.R;
+import org.tmcrafz.cloudgallery.adapters.GalleryItem;
 import org.tmcrafz.cloudgallery.datahandling.StorageHandler;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudOperationDownloadFile;
 import org.tmcrafz.cloudgallery.web.nextcloud.NextcloudWrapper;
+
+import java.io.File;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class ShowPhotoActivity extends AppCompatActivity implements NextcloudOperationDownloadFile.OnDownloadFileFinishedListener {
+public class ShowPhotoActivity extends AppCompatActivity implements
+        NextcloudOperationDownloadFile.OnDownloadFileFinishedListener {
     private static String TAG = ShowPhotoActivity.class.getCanonicalName();
 
     public final static String EXTRA_REMOTE_PATH_TO_IMAGE = "remote_path_to_image";
@@ -254,6 +258,30 @@ public class ShowPhotoActivity extends AppCompatActivity implements NextcloudOpe
 
     @Override
     public void onDownloadFileFinished(String identifier, boolean isSuccessful) {
-
+//        if (isSuccessful) {
+//            String localFilePath = identifier;
+//            File file = new File(localFilePath);
+//            if (file.exists() && file.isFile()) {
+//                // We note that the file is available now
+//                GalleryItem.ImageItem.updateDownloadStatusByLocalFilePath(mItemData, localFilePath, true);
+//                //mGalleryAdapter.notifyDataSetChanged();
+//                int updatePosition = GalleryItem.ImageItem.getPositionByLocalFilePath(mItemData, localFilePath);
+//                mAdapter.notifyItemChanged(updatePosition, null);
+//                //mGalleryAdapter.notifyDataSetChanged();
+//            }
+//            else {
+//                Log.e(TAG, "Showing downloaded file with identifier '" + identifier +"' failed. File is not existing or directory");
+//                if (!file.exists()) {
+//                    Log.e(TAG, "-->File is not existing");
+//                }
+//                if (!file.isFile()) {
+//                    Log.e(TAG, "-->Not a file");
+//                }
+//            }
+//        }
+//        else {
+//            Log.e(TAG, "Download Thumbnail with identifier failed: " + identifier);
+//        }
+//        NextcloudWrapper.wrapper.cleanOperations();
     }
 }
